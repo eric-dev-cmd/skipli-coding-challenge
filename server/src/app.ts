@@ -2,7 +2,7 @@ import express from "express";
 import { notFound } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
 import { config } from "./config";
-// import githubRoutes from "./routes/github.routes";
+import githubRoutes from "./routes/github.routes";
 import { db } from "./config/firebase.config";
 
 const cors = require("cors");
@@ -66,7 +66,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 // app.use("/api/auth", authRoutes);
-// app.use("/api/github/", githubRoutes);
+app.use("/api/github/", githubRoutes);
 // app.use("/api/user", userRoutes);
 
 // 404 + error handler
