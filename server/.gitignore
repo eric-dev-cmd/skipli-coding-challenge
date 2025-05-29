@@ -1,0 +1,7 @@
+.env*
+.DS_Store
+*.log
+node_modules/
+dist/
+# Firebase credential key
+serviceAccountKey.json
