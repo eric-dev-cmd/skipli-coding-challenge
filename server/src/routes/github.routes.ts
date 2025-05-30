@@ -1,10 +1,17 @@
 import { Router, Request, Response } from "express";
-import { searchGithubUsers } from "../controller/github.controller";
+import {
+  findGithubUserProfile,
+  searchGithubUsers,
+} from "../controller/github.controller";
 
 const router = Router();
 
 router.get("/users", async (req: Request, res: Response) => {
   await searchGithubUsers(req, res);
+});
+
+router.get("/users/:id", async (req: Request, res: Response) => {
+  await findGithubUserProfile(req, res);
 });
 
 export default router;
