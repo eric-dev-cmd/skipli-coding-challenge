@@ -10,7 +10,7 @@ router.get("/users", async (req: Request, res: Response) => {
   await searchGithubUsers(req, res);
 });
 
-router.get("/users/:id", async (req: Request, res: Response) => {
+router.get("/user/:github_user_id", async (req: Request, res: Response) => {
   await findGithubUserProfile(req, res);
 });
 
