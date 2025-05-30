@@ -38,6 +38,9 @@ importers:
       helmet:
         specifier: ^8.1.0
         version: 8.1.0
+      libphonenumber-js:
+        specifier: ^1.12.8
+        version: 1.12.8
       morgan:
         specifier: ^1.10.0
         version: 1.10.0
@@ -1472,6 +1475,9 @@ packages:
   leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
     engines: {node: '>=6'}
+
+  libphonenumber-js@1.12.8:
+    resolution: {integrity: sha512-f1KakiQJa9tdc7w1phC2ST+DyxWimy9c3g3yeF+84QtEanJr2K77wAmBPP22riU05xldniHsvXuflnLZ4oysqA==}
 
   limiter@1.1.5:
     resolution: {integrity: sha512-FWWMIEOxz3GwUI4Ts/IvgVy6LPvoMPgjMdQ185nN6psJyBJ4yOpzqm695/h5umdLJg2vW3GR5iG11MAkR2AzJA==}
@@ -4093,6 +4099,8 @@ snapshots:
   kleur@3.0.3: {}
 
   leven@3.1.0: {}
+
+  libphonenumber-js@1.12.8: {}
 
   limiter@1.1.5: {}
 
