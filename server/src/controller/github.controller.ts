@@ -24,13 +24,6 @@ export const searchGithubUsers = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Invalid page number" });
   }
 
-  if (pageNum * perPageNum > 1000) {
-    return res.status(400).json({
-      error:
-        "Too many results requested. GitHub API only allows up to 1000 results. Please reduce 'page' or 'per_page'.",
-    });
-  }
-
   try {
     const users = await searchGithubUsersService(q, pageNum, perPageNum);
     return res.status(200).json(users);
