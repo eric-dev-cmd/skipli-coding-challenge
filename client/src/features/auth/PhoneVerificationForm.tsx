@@ -1,13 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { PhoneIcon, KeyIcon } from "lucide-react";
+import { KeyIcon, PhoneIcon } from "lucide-react";
 
-import { ROUTES } from "@/constants/routes";
-import { useNavigate } from "react-router-dom";
-import { isValidAccessCode, isValidPhoneNumber } from "@/utils/validations";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { isValidAccessCode, isValidPhoneNumber } from "@/utils/validations";
 
 interface PhoneVerificationFormProps {
   onRequestAccessCode: (phoneNumber: string) => Promise<void>;
@@ -27,7 +25,6 @@ export function PhoneVerificationForm({
   const [accessCode, setAccessCode] = useState("");
   const [step, setStep] = useState<1 | 2>(1);
   const [resendTimer, setResendTimer] = useState(0);
-  const navigate = useNavigate();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -48,28 +45,17 @@ export function PhoneVerificationForm({
         );
         return;
       }
-      try {
-        await onRequestAccessCode(phoneNumber);
-        toast.success("Access code sent to your phone number!");
-        setStep(2);
-        setResendTimer(60);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
-        toast.error("Failed to send access code. Please try again.");
-      }
+
+      await onRequestAccessCode(phoneNumber);
+      setStep(2);
+      setResendTimer(60);
     } else if (step === 2) {
       if (!isValidAccessCode(accessCode)) {
         toast.error("Please enter a 6-digit access code.");
         return;
       }
-      try {
-        await onVerifyAccessCode(phoneNumber, accessCode);
-        toast.success("Phone number verified!");
-        navigate(ROUTES.DASHBOARD);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
-        toast.error("Invalid access code. Please try again.");
-      }
+
+      await onVerifyAccessCode(phoneNumber, accessCode);
     }
   };
 
@@ -80,14 +66,8 @@ export function PhoneVerificationForm({
       );
       return;
     }
-    try {
-      await onRequestAccessCode(phoneNumber);
-      toast.success("Access code resent!");
-      setResendTimer(60);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      toast.error("Failed to resend access code. Please try again.");
-    }
+    await onRequestAccessCode(phoneNumber);
+    setResendTimer(60);
   };
 
   return (
@@ -130,6 +110,7 @@ export function PhoneVerificationForm({
             }}
             required
             aria-required="true"
+            aria-live="polite"
             inputMode="numeric"
             pattern="\+?\d{10,15}"
             maxLength={16}
@@ -163,21 +144,32 @@ export function PhoneVerificationForm({
               }}
               required
               aria-required="true"
+              aria-live="polite"
               maxLength={6}
               inputMode="numeric"
               pattern="\d*"
             />
           </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full mt-2 border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200 cursor-pointer"
-            onClick={handleResendCode}
-            disabled={resendTimer > 0}
-          >
-            {resendTimer > 0 ? `Resend (${resendTimer}s)` : "Resend Code"}
-          </Button>
+          <div className="flex justify-between items-center gap-2 mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+              onClick={() => setStep(1)}
+            >
+              Back
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200 cursor-pointer"
+              onClick={handleResendCode}
+              disabled={resendTimer > 0}
+            >
+              {resendTimer > 0 ? `Resend (${resendTimer}s)` : "Resend Code"}
+            </Button>
+          </div>
         </div>
       )}
 

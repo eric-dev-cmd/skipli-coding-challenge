@@ -8,7 +8,6 @@ export const ROUTES = {
 
   // Errors
   ERROR: "/error",
-  FORBIDDEN: "/forbidden",
   NOT_FOUND: "/not-found",
 } as const;
 
