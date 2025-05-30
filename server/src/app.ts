@@ -3,6 +3,8 @@ import { notFound } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
 import { config } from "./config";
 import githubRoutes from "./routes/github.routes";
+import accessCodeRoutes from "./routes/accessCode.routes";
+import userRoutes from "./routes/user.routes";
 import { db } from "./config/firebase.config";
 
 const cors = require("cors");
@@ -19,9 +21,9 @@ const swaggerUi = require("swagger-ui-express");
     await db
       .ref("test-connection")
       .set({ status: "ok", timestamp: new Date().toISOString() });
-    console.log("✅ Firebase OK");
+    // console.log("✅ Firebase OK");
   } catch (err) {
-    console.error("❌ Firebase failed:", err);
+    // console.error("❌ Firebase failed:", err);
   }
 })();
 
@@ -57,17 +59,12 @@ app.use(logger("dev"));
 
 // Swagger documentation
 const swaggerDocument = YAML.load("./swagger.yaml");
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Import routes
-// const authRoutes = require("./routes/authRoutes.js");
-
-// const userRoutes = require("./routes/userRoutes");
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
-// app.use("/api/auth", authRoutes);
-app.use("/api/github/", githubRoutes);
-// app.use("/api/user", userRoutes);
+app.use("/api/auth", accessCodeRoutes);
+app.use("/api/github", githubRoutes);
+app.use("/api/user-profile", userRoutes);
 
 // 404 + error handler
 app.use(notFound);
