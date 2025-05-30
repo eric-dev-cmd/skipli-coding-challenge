@@ -1,10 +1,7 @@
+import DashboardWidget from "@/features/dashboard/DashboardWidget";
+
 const DashboardPage = () => {
-  console.log("Eric DashboardPage");
-  return (
-    <div>
-      <p>DashboardPage</p>
-    </div>
-  );
+  return <DashboardWidget />;
 };
 
 export default DashboardPage;
