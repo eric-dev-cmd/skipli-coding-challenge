@@ -16,19 +16,28 @@ export const likeGithubUserService = async (
 
   const likesRef = userRef.child("favorite_github_users");
 
+  let action: "liked" | "unliked" = "liked";
+
   await likesRef.transaction(
     (currentLikes) => {
-      const likes = currentLikes || [];
-      if (!likes.includes(githubUserId)) {
+      let likes = currentLikes || [];
+      if (likes.includes(githubUserId)) {
+        // Unlike
+        likes = likes.filter((id: number) => id !== githubUserId);
+        action = "unliked";
+      } else {
+        // Like
         likes.push(githubUserId);
       }
       return likes;
     },
     (error, committed) => {
       if (error) throw new Error("Transaction failed");
-      if (!committed) throw new Error("Like not committed");
+      if (!committed) throw new Error("Like/unlike not committed");
     }
   );
+
+  return { success: true, action };
 };
 
 export const getUserProfileService = async (inputPhoneNumber: string) => {
