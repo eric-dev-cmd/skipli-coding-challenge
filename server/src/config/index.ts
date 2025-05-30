@@ -31,7 +31,8 @@ export const config = {
   twilio: {
     accountSid: requireEnv("TWILIO_ACCOUNT_SID"),
     authToken: requireEnv("TWILIO_AUTH_TOKEN"),
-    phoneNumber: requireEnv("TWILIO_PHONE_NUMBER"),
+    fromPhoneNumber: requireEnv("TWILIO_FROM_PHONE"),
+    toPhoneNumber: requireEnv("TWILIO_TO_PHONE"),
   },
   githubApiToken: process.env.GITHUB_API_TOKEN || "",
   corsOrigin: process.env.CORS_ORIGIN,
