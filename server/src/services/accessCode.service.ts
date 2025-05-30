@@ -32,16 +32,16 @@ export const createNewAccessCodeService = async (inputPhoneNumber: string) => {
     accessCode: code,
     accessCodeCreatedAt: now,
   });
-
-  try {
-    await sendSMS(phoneNumber, `Your access code is: ${code}`);
-  } catch (smsError: any) {
-    console.error(
-      `[SMS_ERROR] Failed to send code to ${phoneNumber}`,
-      smsError
-    );
-    throw new Error("Failed to send SMS. Please try again later.");
-  }
+  // 30/05/2025 - test
+  // try {
+  //   await sendSMS(phoneNumber, `Your access code is: ${code}`);
+  // } catch (smsError: any) {
+  //   console.error(
+  //     `[SMS_ERROR] Failed to send code to ${phoneNumber}`,
+  //     smsError
+  //   );
+  //   throw new Error("Failed to send SMS. Please try again later.");
+  // }
 
   return code;
 };
