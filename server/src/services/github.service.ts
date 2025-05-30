@@ -19,17 +19,9 @@ export const searchGithubUsersService = async (
       params: { q, page: validatedPage, per_page: validatedPerPage },
     });
 
-    const { total_count, items } = response.data;
-    const total_pages = Math.ceil(total_count / validatedPerPage);
+    const { items } = response.data;
 
     return {
-      success: true,
-      total_count,
-      page: validatedPage,
-      per_page: validatedPerPage,
-      total_pages,
-      has_next_page: validatedPage < total_pages,
-      has_prev_page: validatedPage > 1,
       users: items,
     };
   } catch (error: any) {
