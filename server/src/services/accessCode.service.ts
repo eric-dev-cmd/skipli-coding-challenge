@@ -59,7 +59,9 @@ export const validateAccessCodeService = async (
   const createdAt = data?.accessCodeCreatedAt;
 
   if (!storedCode || storedCode !== code) {
-    throw new Error("Invalid access code");
+    throw new Error(
+      "The access code you entered is incorrect. Please double-check and try again."
+    );
   }
 
   const now = Date.now();

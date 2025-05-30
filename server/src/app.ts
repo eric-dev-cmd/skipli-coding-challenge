@@ -34,19 +34,22 @@ const app = express();
 app.use(helmet());
 
 // Rate limiting
-const apiLimiter = rateLimit({
+const otpRateLimiter = rateLimit({
   windowMs: config.rateLimit.windowMs,
   max: config.rateLimit.maxRequests,
   standardHeaders: true,
   legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+    errorCode: "RATE_LIMIT_EXCEEDED",
+  },
 });
-
-app.use("/api", apiLimiter);
 
 // Middleware
 app.use(
   cors({
-    origin: config.corsOrigin || "http://localhost:3000",
+    origin: config.corsOrigin,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
@@ -62,7 +65,7 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
-app.use("/api/auth", accessCodeRoutes);
+app.use("/api/auth", otpRateLimiter, accessCodeRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/user-profile", userRoutes);
 
