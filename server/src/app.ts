@@ -1,11 +1,12 @@
 import express from "express";
-import { notFound } from "./middleware/notFound";
+
 import { errorHandler } from "./middleware/errorHandler";
 import { config } from "./config";
 import githubRoutes from "./routes/github.routes";
 import accessCodeRoutes from "./routes/accessCode.routes";
 import userRoutes from "./routes/user.routes";
 import { db } from "./config/firebase.config";
+import { notFound } from "./middleware/notFound";
 
 const cors = require("cors");
 const helmet = require("helmet");

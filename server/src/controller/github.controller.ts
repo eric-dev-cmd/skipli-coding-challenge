@@ -35,11 +35,9 @@ export const searchGithubUsers = async (req: Request, res: Response) => {
   }
 
   try {
-    const users = await searchGithubUsersService(q, pageNum, perPageNum);
-    return res.status(200).json(users);
+    const result = await searchGithubUsersService(q, pageNum, perPageNum);
+    return res.status(200).json(result);
   } catch (error: any) {
-    console.error("searchGithubUsers error:", error.message);
-
     const status = error.response?.status || 500;
     const message =
       error.response?.data?.message ||
@@ -72,8 +70,6 @@ export const findGithubUserProfile = async (req: Request, res: Response) => {
     const user = await findGithubUserProfileService(github_user_id);
     return res.status(200).json(user);
   } catch (error: any) {
-    console.error("findGithubUserProfile error:", error.message);
-
     const status = error.response?.status || 500;
     const message =
       error.response?.data?.message ||
