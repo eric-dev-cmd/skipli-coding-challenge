@@ -8,17 +8,21 @@ export const searchGithubUsers = async (req: Request, res: Response) => {
   const { q, page = 1, per_page = 10 } = req.query;
 
   if (!q || typeof q !== "string" || q.trim() === "") {
-    return res.status(400).json({
-      success: false,
-      message: "Please enter a search term to look up GitHub users.",
-      errorCode: "INVALID_QUERY",
+    return res.status(200).json({
+      success: true,
+      data: {
+        items: [],
+        total_count: 0,
+        incomplete_results: false,
+      },
+      message: "No search term provided",
     });
   }
 
-  if (q.length > 100) {
+  if (q.length > 256) {
     return res.status(400).json({
       success: false,
-      message: "Your search term is too long. Please shorten it and try again.",
+      message: "Search term is too long",
       errorCode: "QUERY_TOO_LONG",
     });
   }
