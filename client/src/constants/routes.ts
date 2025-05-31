@@ -1,15 +1,18 @@
+// src/constants/routes.ts
+
 export const ROUTES = {
-  // Auth
+  // Authentication
   LOGIN: "/auth/login",
 
   // Main App
-  DASHBOARD: "/dashboard",
+  HOME: "/",
   PROFILE: "/profile",
 
-  // Errors
+  // Error Handling
   ERROR: "/error",
   NOT_FOUND: "/not-found",
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
+
 export type RoutePath = (typeof ROUTES)[RouteKey];

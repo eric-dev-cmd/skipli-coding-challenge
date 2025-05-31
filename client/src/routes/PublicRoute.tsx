@@ -1,4 +1,4 @@
-import EmptyLayout from "@/components/layouts/MainLayout";
+import MainLayout from "@/components/layouts/MainLayout";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
@@ -10,8 +10,8 @@ interface PublicRouteProps {
 }
 
 const PublicRoute: React.FC<PublicRouteProps> = ({
-  redirectPath = ROUTES.DASHBOARD,
-  layout: Layout = EmptyLayout,
+  redirectPath = ROUTES.HOME,
+  layout: Layout = MainLayout,
   restrictedWhenLoggedIn = false,
 }) => {
   const { isAuthenticated } = useAuth();

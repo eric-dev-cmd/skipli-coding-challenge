@@ -1,5 +1,5 @@
 import ErrorBoundary from "@/components/errorPages/ErrorBoundary";
-import LoadingFallback from "@/components/loading/LoadingFallback";
+import LoadingFallback from "@/components/common/loading/LoadingFallback";
 import React, { Suspense } from "react";
 
 interface WithSuspenseAndErrorBoundaryOptions {

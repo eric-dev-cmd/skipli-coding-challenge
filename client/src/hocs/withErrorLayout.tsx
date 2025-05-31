@@ -78,7 +78,7 @@ const withErrorLayout = (WrappedComponent: React.FC<ErrorPageProps>) => {
             >
               {props.showHomeButton && (
                 <button
-                  onClick={() => navigate(ROUTES.DASHBOARD)}
+                  onClick={() => navigate(ROUTES.HOME)}
                   className="px-6 py-2.5 bg-blue-700 text-white font-medium rounded hover:bg-blue-800 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-300"
                 >
                   Trang chủ

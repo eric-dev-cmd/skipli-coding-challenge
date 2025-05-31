@@ -2,7 +2,7 @@ import { ROUTES } from "@/constants/routes";
 import { PhoneVerificationForm } from "@/features/auth/PhoneVerificationForm";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { authService } from "@/services/authService";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -36,20 +36,20 @@ const LoginPage = () => {
       if (response.success) {
         setPhoneNumberStorage(phoneNumber);
         toast.success("Phone number verified successfully!");
-        navigate(ROUTES.DASHBOARD);
+        navigate(ROUTES.HOME);
       }
     } finally {
       setIsSubmitting(false);
     }
   };
   return (
-    <Fragment>
+    <div className="flex items-center justify-center w-screen h-screen">
       <PhoneVerificationForm
         onRequestAccessCode={handleRequestAccessCode}
         onVerifyAccessCode={handleVerifyAccessCode}
         isSubmitting={isSubmitting}
       />
-    </Fragment>
+    </div>
   );
 };
 

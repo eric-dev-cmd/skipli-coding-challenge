@@ -1,47 +1,53 @@
-import PublicRoute from "@/routes/PublicRoute";
 import { lazy } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
+import PublicRoute from "@/routes/PublicRoute";
+import RestrictedRoute from "./RestrictedRoute";
 import withSuspenseAndErrorBoundary from "@/hocs/withSuspenseAndErrorBoundary";
-import EmptyLayout from "@/components/layouts/MainLayout";
-import { ROUTES } from "@/constants/routes";
-import ProtectedRoute from "./ProtectedRoute";
+
 import MainLayout from "@/components/layouts/MainLayout";
+import { ROUTES } from "@/constants/routes";
 
-// Error pages
-
-const NotFound = withSuspenseAndErrorBoundary(
-  lazy(() => import("@/components/errorPages/NotFound"))
-);
-const Error = withSuspenseAndErrorBoundary(
-  lazy(() => import("@/components/errorPages/ErrorPage"))
-);
-
+// Lazy-loaded pages wrapped with Suspense and ErrorBoundary
 const LoginPage = withSuspenseAndErrorBoundary(
   lazy(() => import("@/pages/LoginPage"))
 );
-
-const DashboardPage = withSuspenseAndErrorBoundary(
-  lazy(() => import("@/pages/DashboardPage"))
+const GithubPage = withSuspenseAndErrorBoundary(
+  lazy(() => import("@/pages/GithubPage"))
+);
+const NotFoundPage = withSuspenseAndErrorBoundary(
+  lazy(() => import("@/components/errorPages/NotFound"))
+);
+const ErrorPage = withSuspenseAndErrorBoundary(
+  lazy(() => import("@/components/errorPages/ErrorPage"))
 );
 
+// Router configuration
 const router = createBrowserRouter([
   {
-    element: <PublicRoute layout={EmptyLayout} restrictedWhenLoggedIn={true} />,
-    errorElement: <Error />,
+    element: <PublicRoute layout={MainLayout} />,
+    errorElement: <ErrorPage />,
     children: [
-      { path: "/", element: <Navigate to={ROUTES.LOGIN} replace /> },
-      { path: ROUTES.LOGIN, element: <LoginPage /> },
-      { path: ROUTES.NOT_FOUND, element: <NotFound /> },
-      { path: "*", element: <NotFound /> },
-    ],
-  },
-  {
-    element: <ProtectedRoute layout={MainLayout} />,
-    errorElement: <Error />,
-    children: [
-      { path: ROUTES.DASHBOARD, element: <DashboardPage /> },
-      { path: "*", element: <NotFound /> },
+      {
+        path: ROUTES.HOME,
+        element: <GithubPage />,
+      },
+      {
+        path: ROUTES.LOGIN,
+        element: (
+          <RestrictedRoute>
+            <LoginPage />
+          </RestrictedRoute>
+        ),
+      },
+      {
+        path: ROUTES.NOT_FOUND,
+        element: <NotFoundPage />,
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />,
+      },
     ],
   },
 ]);
