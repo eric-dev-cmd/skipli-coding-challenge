@@ -1,4 +1,3 @@
-// src/components/modals/ProfileDialog.tsx
 import {
   Dialog,
   DialogContent,
@@ -12,7 +11,6 @@ import {
   PhoneIcon,
   Heart,
   GitBranch,
-  Users,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +21,7 @@ import type { GithubUser } from "@/services/githubService";
 interface ProfileDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  likedUsers: GithubUser[];
+  favoriteUsers: GithubUser[];
   userName?: string;
   onLogout: () => void;
   onUnlike: (userId: number, username: string) => void;
@@ -33,7 +31,7 @@ interface ProfileDialogProps {
 const ProfileDialog = ({
   isOpen,
   onClose,
-  likedUsers,
+  favoriteUsers,
   userName,
   onLogout,
   onUnlike,
@@ -41,7 +39,7 @@ const ProfileDialog = ({
 }: ProfileDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-[90vw] md:max-w-[70%] max-h-[90vh] mx-auto p-4 md:p-6 gap-4 overflow-y-auto rounded-lg bg-white shadow-lg">
+      <DialogContent className="w-full max-w-[90vw] md:max-w-[60%] max-h-[90vh] mx-auto p-4 md:p-6 gap-4 overflow-y-auto rounded-lg bg-white shadow-lg">
         <DialogHeader>
           <DialogTitle>My Profile</DialogTitle>
         </DialogHeader>
@@ -52,18 +50,20 @@ const ProfileDialog = ({
               Profile Information
             </TabsTrigger>
             <TabsTrigger className="cursor-pointer" value="favorites">
-              Favorites ({likedUsers.length})
+              Favorites ({favoriteUsers.length})
             </TabsTrigger>
           </TabsList>
 
           {/* Profile Info */}
           <TabsContent value="info" className="space-y-4">
             <Card>
-              <CardContent className="p-6">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="relative w-full sm:w-auto">
-                    <div className="relative bg-white rounded-lg p-5 border-l-2 border-black shadow-md w-full sm:w-auto">
-                      <div className="flex items-center justify-between gap-4">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4">
+                  {/* Contact Information */}
+                  <div className="relative w-full">
+                    <div className="relative bg-white rounded-lg p-4 sm:p-5 border-l-2 border-black shadow-md w-full">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        {/* Icon + Info */}
                         <div className="flex items-center gap-4">
                           <div className="p-2 bg-blue-600 rounded-full flex-shrink-0">
                             <PhoneIcon className="h-5 w-5 text-white" />
@@ -82,14 +82,22 @@ const ProfileDialog = ({
                             </p>
                           </div>
                         </div>
-                        <CopyButton textToCopy={userName || ""} />
+                        <div className="flex justify-end sm:justify-center">
+                          <CopyButton textToCopy={userName || ""} />
+                        </div>
                       </div>
                     </div>
                   </div>
+
                   <Button
                     variant="outline"
                     onClick={onLogout}
-                    className="text-red-700 hover:text-red-800 cursor-pointer flex items-center gap-2"
+                    className="
+          w-full sm:w-auto
+          text-red-700 hover:text-red-800
+          cursor-pointer flex items-center justify-center
+          gap-2
+        "
                   >
                     <LogOut className="h-5 w-5" />
                     Logout
@@ -101,9 +109,9 @@ const ProfileDialog = ({
 
           {/* Favorites */}
           <TabsContent value="favorites" className="space-y-4">
-            {likedUsers.length === 0 ? (
+            {favoriteUsers.length === 0 ? (
               <Card className="border-0 shadow-sm">
-                <CardContent className="p-8">
+                <CardContent className="p-4 sm:p-6">
                   <div className="text-center">
                     <div className="p-4 bg-gray-100 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                       <Heart className="h-10 w-10 text-gray-400" />
@@ -119,14 +127,14 @@ const ProfileDialog = ({
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-3">
-                {likedUsers.map((user) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {favoriteUsers?.map((user) => (
                   <Card
                     key={user.id}
                     className="border-0 shadow-sm hover:shadow-md transition-shadow duration-200"
                   >
                     <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center gap-4">
                         <Avatar className="h-12 w-12 border-2 border-gray-100">
                           <AvatarImage
                             src={user.avatar_url}
@@ -139,28 +147,36 @@ const ProfileDialog = ({
 
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-gray-500 font-mono mb-2">
-                            ID: {user.id}
+                            <span className="font-semibold text-gray-900">
+                              ID: {user.id}
+                            </span>
                           </p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
+
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
                             <div className="flex items-center gap-1">
                               <GitBranch className="h-3 w-3" />
-                              <span>{user.public_repos} repos</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              <span>
-                                {user.followers.toLocaleString()} followers
+                              <span className="font-semibold text-gray-900">
+                                {user.public_repos}
                               </span>
+                              repos
+                            </div>
+
+                            <div className="flex items-center gap-1">
+                              <GitBranch className="h-3 w-3" />
+                              <span className="font-semibold text-gray-900">
+                                {user.followers.toLocaleString()}
+                              </span>
+                              followers
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto justify-end">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => onUnlike(user.id, user.login)}
-                            className="p-2 hover:bg-red-50 group"
+                            className="p-2 hover:bg-red-50 group w-full sm:w-auto"
                             aria-label={`Remove ${user.login} from favorites`}
                           >
                             <Heart className="h-4 w-4 fill-red-500 text-red-500 group-hover:scale-110 transition-transform" />
@@ -171,7 +187,7 @@ const ProfileDialog = ({
                             onClick={() =>
                               onViewProfile(user.html_url, user.login)
                             }
-                            className="hover:bg-blue-50 hover:border-blue-300"
+                            className="hover:bg-blue-50 hover:border-blue-300 w-full sm:w-auto"
                             aria-label={`View ${user.login}'s GitHub profile`}
                           >
                             <ExternalLink className="h-4 w-4" />

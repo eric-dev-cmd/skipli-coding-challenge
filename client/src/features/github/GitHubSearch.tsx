@@ -27,7 +27,6 @@ import { useGitHubSearch } from "@/hooks/useGitHubSearch";
 import { type GithubUser } from "@/services/githubService";
 import toast from "react-hot-toast";
 
-
 const ProfileDialog = lazy(() => import("./components/dialogs/ProfileDialog"));
 const UsersTable = lazy(() => import("./components/users/UsersTable"));
 const UsersGrid = lazy(() => import("./components/users/UsersGrid"));
@@ -35,7 +34,7 @@ const UsersGrid = lazy(() => import("./components/users/UsersGrid"));
 export default function GitHubSearchApp() {
   const navigate = useNavigate();
 
-  const [likedUsers, setLikedUsers] = useState<GithubUser[]>([]);
+  const [favoriteUsers, setFavoriteUsers] = useState<GithubUser[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
 
@@ -83,7 +82,7 @@ export default function GitHubSearchApp() {
     try {
       if (user.isLiked) {
         // Unlike
-        setLikedUsers((prev) => prev.filter((u) => u.id !== userId));
+        setFavoriteUsers((prev) => prev.filter((u) => u.id !== userId));
       } else {
         // Like
         const userToLike: GithubUser = {
@@ -94,7 +93,7 @@ export default function GitHubSearchApp() {
           public_repos: user.public_repos,
           followers: user.followers,
         };
-        setLikedUsers((prev) => [...prev, userToLike]);
+        setFavoriteUsers((prev) => [...prev, userToLike]);
       }
 
       // await likeGithubUser(currentUser.phoneNumber, userId);
@@ -149,7 +148,7 @@ export default function GitHubSearchApp() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         isLoading={isLoading}
-        likedUsers={likedUsers}
+        favoriteUsers={favoriteUsers}
         onClearSearch={handleClearSearch}
         onProfileClick={() => setIsProfileModalOpen(true)}
       />
@@ -182,7 +181,7 @@ export default function GitHubSearchApp() {
                   {hasSearchQuery && (
                     <p className="flex items-center gap-1 text-xs sm:text-sm text-gray-500 mt-1">
                       <Search className="h-3 w-3 sm:h-4 sm:w-4" />
-                      Discover talented developers and their projects
+                      Search for developers on GitHub
                     </p>
                   )}
                 </div>
@@ -316,7 +315,7 @@ export default function GitHubSearchApp() {
             <ProfileDialog
               isOpen={isProfileModalOpen}
               onClose={() => setIsProfileModalOpen(false)}
-              likedUsers={likedUsers}
+              favoriteUsers={favoriteUsers}
               userName={user?.name}
               onLogout={handleLogout}
               onUnlike={handleUnlike}

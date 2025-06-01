@@ -12,7 +12,7 @@ interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   isLoading: boolean;
-  likedUsers: GithubUser[];
+  favoriteUsers: GithubUser[];
   onClearSearch: () => void;
   onProfileClick: () => void;
 }
@@ -21,7 +21,7 @@ export default function Header({
   searchQuery,
   setSearchQuery,
   isLoading,
-  likedUsers,
+  favoriteUsers,
   onClearSearch,
   onProfileClick,
 }: HeaderProps) {
@@ -74,7 +74,7 @@ export default function Header({
                   {user?.name}
                 </span>
 
-                {likedUsers.length > 0 && (
+                {favoriteUsers.length > 0 && (
                   <Badge
                     variant="destructive"
                     className="
@@ -85,7 +85,7 @@ export default function Header({
                       bg-red-700 text-white border-2 border-white shadow
                     "
                   >
-                    {likedUsers.length}
+                    {favoriteUsers.length}
                   </Badge>
                 )}
               </Button>
