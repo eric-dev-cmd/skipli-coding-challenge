@@ -24,8 +24,8 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
 import { useGitHubSearch } from "@/hooks/useGitHubSearch";
-import githubService, { type GithubUser } from "@/services/githubService";
 import toast from "react-hot-toast";
+import { useFavoriteManager } from "@/hooks/useFavoriteManager";
 
 const ProfileDialog = lazy(() => import("./components/dialogs/ProfileDialog"));
 const UsersTable = lazy(() => import("./components/users/UsersTable"));
@@ -34,7 +34,6 @@ const UsersGrid = lazy(() => import("./components/users/UsersGrid"));
 export default function GitHubSearchApp() {
   const navigate = useNavigate();
 
-  const [favoriteUsers, setFavoriteUsers] = useState<GithubUser[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   const [isLiking, setIsLiking] = useState<boolean>(false);
@@ -64,46 +63,42 @@ export default function GitHubSearchApp() {
     handlePageChange,
     handleResultsPerPageChange,
     refetch,
-    toggleLikeUser,
   } = useGitHubSearch({
     debounceDelay: 500,
     defaultResultsPerPage: 10,
   });
 
+  const { favoriteIds, toggleFavorite, refetchFavorites } = useFavoriteManager(
+    user?.id || ""
+  );
+
   // Handle like/unlike with database sync
   const handleLike = async (userId: number) => {
     if (!isAuthenticated) {
-      navigate(ROUTES.LOGIN);
+      const delaySeconds = 2;
+      toast.error(
+        `Please log in to like users. You will be redirected in ${delaySeconds} seconds.`,
+        { icon: "🔒" }
+      );
+      setTimeout(() => navigate(ROUTES.LOGIN), delaySeconds * 1000);
       return;
     }
 
     const userToLike = searchUsers.find((u) => u.id === userId);
+
     if (!userToLike) return;
 
     setIsLiking(true);
-
     try {
-      const phoneNumber = user?.id || "";
-      const action = await githubService.likeGithubUser(phoneNumber, userId);
-      toggleLikeUser(userId, action === "liked");
-
-      setFavoriteUsers((prev) => {
-        if (action === "liked") {
-          if (!prev.some((u) => u.id === userId)) {
-            return [...prev, userToLike];
-          }
-        } else if (action === "unliked") {
-          return prev.filter((u) => u.id !== userId);
-        }
-        return prev;
-      });
-
+      // Call toggleFavorite instead of manual API call
+      await toggleFavorite(userId);
+      refetchFavorites();
       toast.success(
         `${userToLike.login} has been ${
-          action === "liked" ? "added to" : "removed from"
+          favoriteIds.includes(userId) ? "removed from" : "added to"
         } your favorites.`,
         {
-          icon: action === "liked" ? "❤️" : "💔",
+          icon: favoriteIds.includes(userId) ? "💔" : "❤️",
           duration: 2000,
         }
       );
@@ -139,9 +134,9 @@ export default function GitHubSearchApp() {
     () =>
       searchUsers.map((user) => ({
         ...user,
-        isLiked: user.isLiked ?? false,
+        isLiked: favoriteIds?.includes(user.id),
       })),
-    [searchUsers]
+    [searchUsers, favoriteIds]
   );
 
   return (
@@ -150,7 +145,7 @@ export default function GitHubSearchApp() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         isLoading={isLoading}
-        favoriteUsers={favoriteUsers}
+        favoriteCount={favoriteIds}
         onClearSearch={handleClearSearch}
         onProfileClick={() => setIsProfileModalOpen(true)}
       />
@@ -323,7 +318,6 @@ export default function GitHubSearchApp() {
             <ProfileDialog
               isOpen={isProfileModalOpen}
               onClose={() => setIsProfileModalOpen(false)}
-              favoriteUsers={favoriteUsers}
               userName={user?.name}
               onLogout={handleLogout}
               onViewProfile={handleViewProfile}

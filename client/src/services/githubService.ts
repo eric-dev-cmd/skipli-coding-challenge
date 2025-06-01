@@ -23,11 +23,6 @@ export interface SearchGithubUsersResponse {
   pagination: PaginationInfo;
 }
 
-interface LikeGithubUserResponse {
-  success: boolean;
-  action: "liked" | "unliked";
-}
-
 // ================== API: Search Users ==================
 export const searchGithubUsers = async (
   q: string,
@@ -43,25 +38,20 @@ export const searchGithubUsers = async (
   return response.data;
 };
 
-// ================== API: Like/Unlike User ==================
-export const likeGithubUser = async (
-  phone_number: string,
+// ================== API: Get GitHub User Detail ==================
+export const findGithubUserProfile = async (
   github_user_id: number
-): Promise<"liked" | "unliked"> => {
-  const response = await axiosInstance.post<LikeGithubUserResponse>(
-    "/user/like",
-    {
-      phone_number,
-      github_user_id,
-    }
+): Promise<GithubUser> => {
+  const response = await axiosInstance.get<GithubUser>(
+    `/github/user/${github_user_id}`
   );
-  return response.data.action;
+  return response.data;
 };
 
 // ================== Combine all services ==================
 const githubService = {
   searchGithubUsers,
-  likeGithubUser,
+  findGithubUserProfile,
 };
 
 export default githubService;

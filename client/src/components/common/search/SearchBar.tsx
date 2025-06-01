@@ -101,9 +101,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               type="button"
               onClick={handleClear}
               className="
-                rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 
+                rounded-full hover:bg-gray-200
                 p-1 transition-colors flex-shrink-0
-                focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer              "
+                focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer"
               aria-label="Clear search"
             >
               <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />

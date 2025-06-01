@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { searchGithubUsers } from "@/services/githubService";
+import { useQuery } from "@tanstack/react-query";
+import githubService from "@/services/githubService";
 import { useDebounce } from "./useDebounce";
 
 interface UseGitHubSearchOptions {
@@ -24,8 +24,6 @@ export const useGitHubSearch = (options: UseGitHubSearchOptions = {}) => {
     staleTime = 5 * 60 * 1000, // 5 minutes
     gcTime = 10 * 60 * 1000, // 10 minutes
   } = options;
-
-  const queryClient = useQueryClient();
 
   // Search state
   const [searchState, setSearchState] = useState<SearchState>({
@@ -63,7 +61,7 @@ export const useGitHubSearch = (options: UseGitHubSearchOptions = {}) => {
       searchState.resultsPerPage,
     ],
     queryFn: () =>
-      searchGithubUsers(
+      githubService.searchGithubUsers(
         debouncedSearchQuery,
         searchState.currentPage,
         searchState.resultsPerPage
@@ -122,37 +120,11 @@ export const useGitHubSearch = (options: UseGitHubSearchOptions = {}) => {
     [setResultsPerPage]
   );
 
-  // Toggle isLiked in cached users
-  const toggleLikeUser = useCallback(
-    (userId: number, isLiked: boolean) => {
-      queryClient.setQueryData(
-        [
-          "github-search",
-          debouncedSearchQuery,
-          searchState.currentPage,
-          searchState.resultsPerPage,
-        ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (oldData: any) => {
-          if (!oldData) return oldData;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const updatedUsers = oldData.users.map((user: any) =>
-            user.id === userId ? { ...user, isLiked } : user
-          );
-          return { ...oldData, users: updatedUsers };
-        }
-      );
-    },
-    [
-      queryClient,
-      debouncedSearchQuery,
-      searchState.currentPage,
-      searchState.resultsPerPage,
-    ]
-  );
-
   // Processed data
-  const users = queryResult.data?.users || [];
+  const users = (queryResult.data?.users || []).map((u) => ({
+    ...u,
+  }));
+
   const totalResults = queryResult.data?.pagination?.total_count || 0;
   const totalPages = queryResult.data?.pagination?.total_pages || 1;
 
@@ -197,8 +169,6 @@ export const useGitHubSearch = (options: UseGitHubSearchOptions = {}) => {
     handlePageChange,
     handleResultsPerPageChange,
     refetch: queryResult.refetch,
-    toggleLikeUser,
-
     // Raw query result for advanced usage
     queryResult,
   };

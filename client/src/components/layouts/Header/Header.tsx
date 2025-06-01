@@ -6,13 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchBar from "@/components/common/search/SearchBar";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
-import { type GithubUser } from "@/services/githubService";
 
 interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   isLoading: boolean;
-  favoriteUsers: GithubUser[];
+  favoriteCount: number[];
   onClearSearch: () => void;
   onProfileClick: () => void;
 }
@@ -21,7 +20,7 @@ export default function Header({
   searchQuery,
   setSearchQuery,
   isLoading,
-  favoriteUsers,
+  favoriteCount,
   onClearSearch,
   onProfileClick,
 }: HeaderProps) {
@@ -48,7 +47,6 @@ export default function Header({
               isLoading={isLoading}
               autoFocus={true}
               onClear={onClearSearch}
-              // Giới hạn chiều rộng, để flex co dãn đúng:
               className="w-full max-w-full sm:max-w-lg"
             />
           </div>
@@ -61,31 +59,32 @@ export default function Header({
                 size="sm"
                 onClick={onProfileClick}
                 className="
-                  relative flex items-center gap-1 sm:gap-2
-                  px-2 sm:px-3 py-1.5 sm:py-2
-                  rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black
-                  transition-all duration-200 cursor-pointer
-                "
+               relative flex items-center gap-1 sm:gap-2
+               px-2 sm:px-3 py-1.5 sm:py-2
+               rounded-full hover:bg-gray-100 dark:hover:bg-gray-800
+               focus:outline-none focus:ring-2 focus:ring-black
+               transition-all duration-200 cursor-pointer
+             "
               >
-                <User className="h-5 sm:h-6 w-5 sm:w-6 text-gray-700" />
-
-                {/* Chỉ hiển thị text phoneNumber từ sm trở lên, và nếu quá dài thì ellipsis */}
-                <span className="hidden sm:inline-block text-sm font-medium text-gray-700 truncate max-w-[100px]">
+                <User className="h-5 sm:h-6 w-5 sm:w-6 text-gray-700 dark:text-gray-200" />
+                <span className="hidden sm:inline-block text-sm font-medium text-gray-700 dark:text-gray-200 truncate max-w-[100px]">
                   {user?.name}
                 </span>
 
-                {favoriteUsers.length > 0 && (
+                {favoriteCount.length > 0 && (
                   <Badge
                     variant="destructive"
                     className="
-                      absolute -top-1.5 -right-1.5
-                      h-4 sm:h-5 w-4 sm:w-5
-                      rounded-full flex items-center justify-center
-                      text-[10px] sm:text-xs font-semibold
-                      bg-red-700 text-white border-2 border-white shadow
-                    "
+                    absolute -top-1.5 -right-1.5
+                    h-4 sm:h-5 w-4 sm:w-5
+                    flex items-center justify-center
+                    rounded-full text-[10px] sm:text-xs font-semibold
+                    bg-red-700 text-white border-2 border-white shadow
+                    hover:bg-red-800 transition-colors duration-200
+                  "
+                    title="Number of favorite GitHub users"
                   >
-                    {favoriteUsers.length}
+                    {favoriteCount.length}
                   </Badge>
                 )}
               </Button>

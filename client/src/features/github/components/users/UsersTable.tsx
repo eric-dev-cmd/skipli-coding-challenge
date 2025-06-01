@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useDebouncedAction } from "@/hooks/useDebouncedAction";
 import { cn } from "@/lib/utils";
 import type { GitHubUser } from "@/types";
 import { ExternalLink, Heart } from "lucide-react";
@@ -25,17 +26,22 @@ const UsersTable = ({
   currentPage,
   resultsPerPage,
 }: UsersTableProps) => {
+  const [disabledLikes, handleLikeDebounced] = useDebouncedAction(2000);
+
+  const handleLikeClick = (userId: number) => {
+    handleLikeDebounced(userId, () => handleLike(userId));
+  };
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
       <div className="w-full overflow-x-auto">
         <Table className="w-full min-w-[640px]">
           {/* Table Header */}
-          <TableHeader className="bg-gray-50 dark:bg-gray-900">
-            <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-900">
+          <TableHeader className="bg-gray-100">
+            <TableRow className="hover:bg-gray-200">
               <TableHead className="text-right w-[40px] font-semibold text-xs sm:text-sm">
                 #
               </TableHead>
-
               <TableHead className="text-right w-[100px] font-semibold text-xs sm:text-sm hidden md:table-cell">
                 ID
               </TableHead>
@@ -54,7 +60,6 @@ const UsersTable = ({
               <TableHead className="text-right w-[80px] font-semibold text-xs sm:text-sm lg:table-cell">
                 Followers
               </TableHead>
-
               <TableHead className="text-center w-[100px] font-semibold text-xs sm:text-sm">
                 Actions
               </TableHead>
@@ -70,82 +75,80 @@ const UsersTable = ({
               return (
                 <TableRow
                   key={user.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700"
+                  className={cn(
+                    "border-b border-gray-200",
+                    "hover:bg-gray-100",
+                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  )}
                 >
-                  <TableCell className="text-right font-mono text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+                  <TableCell className="text-right font-mono text-gray-600 text-xs sm:text-sm">
                     {serialNumber}
                   </TableCell>
-
-                  <TableCell className="text-right font-mono text-gray-600 dark:text-gray-300 text-xs sm:text-sm hidden md:table-cell">
+                  <TableCell className="text-right font-mono text-gray-600 text-xs sm:text-sm hidden md:table-cell">
                     {user.id}
                   </TableCell>
-
-                  {/* Username */}
-                  <TableCell className="text-left font-medium text-sm sm:text-base">
+                  <TableCell className="text-left font-medium text-gray-900 text-sm sm:text-base">
                     {user.login}
                   </TableCell>
-
                   <TableCell className="text-center md:table-cell">
                     <div className="flex justify-center items-center">
-                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10 border-1 border-gray-200 dark:border-gray-700">
+                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10 border border-gray-200">
                         <AvatarImage
                           src={user.avatar_url || "/placeholder.svg"}
                           alt={user.login}
                         />
-                        <AvatarFallback className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                        <AvatarFallback className="bg-gray-100 text-gray-800">
                           {user.login.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </div>
                   </TableCell>
-
-                  <TableCell className="text-left min-w-auto text-sm sm:text-base truncate block lg:table-cell">
+                  <TableCell className="text-left text-sm sm:text-base truncate block lg:table-cell">
                     <a
                       href={user.html_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                      className="text-blue-600 hover:text-blue-800 hover:underline"
                     >
                       {user.html_url}
                     </a>
                   </TableCell>
-
-                  <TableCell className="text-right font-medium text-sm sm:text-base md:table-cell">
+                  <TableCell className="text-right font-medium text-gray-700 text-sm sm:text-base md:table-cell">
                     {user.public_repos}
                   </TableCell>
-
-                  <TableCell className="text-right font-medium text-sm sm:text-base lg:table-cell">
+                  <TableCell className="text-right font-medium text-gray-700 text-sm sm:text-base lg:table-cell">
                     {user.followers.toLocaleString()}
                   </TableCell>
-
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-2">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleLike(user.id)}
+                        onClick={() => handleLikeClick(user.id)}
+                        disabled={disabledLikes.includes(user.id)}
                         className={cn(
-                          "p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer",
-                          user.isLiked && "bg-red-50 dark:bg-red-900/20"
+                          "group rounded-full h-8 w-8 sm:h-10 sm:w-10 p-0 flex items-center justify-center cursor-pointer hover:bg-red-200",
+                          user.isLiked && "bg-red-50"
                         )}
                       >
                         <Heart
                           className={cn(
-                            "h-5 w-5",
+                            "h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200",
                             user.isLiked
-                              ? "fill-red-500 text-red-500"
-                              : "text-gray-400 hover:text-red-500"
+                              ? "fill-red-600 text-red-600 group-hover:scale-110"
+                              : "text-red-400 hover:text-red-600 group-hover:scale-110"
                           )}
                         />
                         <span className="sr-only">Like</span>
                       </Button>
+
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => window.open(user.html_url, "_blank")}
-                        className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                        className="p-1 rounded-full cursor-pointer hover:bg-gray-200"
                       >
-                        <ExternalLink className="h-5 w-5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" />
+                        <ExternalLink className="h-5 w-5 text-gray-500 hover:text-gray-700" />
                         <span className="sr-only">View Profile</span>
                       </Button>
                     </div>

@@ -10,16 +10,17 @@ function App() {
   const queryClient = new QueryClient();
 
   return (
-    <AuthProvider>
-      {/* Global toast notifications */}
-      <Toaster position="top-center" />
+    // React Query Provider (singleton for the app)
+    <QueryClientProvider client={queryClient}>
+      {/* Auth Context Provider */}
+      <AuthProvider>
+        {/* Global toast notifications */}
+        <Toaster position="bottom-right" />
 
-      {/* React Query Provider */}
-      <QueryClientProvider client={queryClient}>
-        {/* React Router Provider */}
+        {/* Router */}
         <RouterProvider router={router} />
-      </QueryClientProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

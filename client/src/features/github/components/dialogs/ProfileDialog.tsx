@@ -12,16 +12,16 @@ import {
   Heart,
   GitBranch,
   ExternalLink,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/common/button/CopyButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { GithubUser } from "@/services/githubService";
+import { useFavoriteManager } from "@/hooks/useFavoriteManager";
 
 interface ProfileDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  favoriteUsers: GithubUser[];
   userName?: string;
   onLogout: () => void;
   onViewProfile: (url: string, username: string) => void;
@@ -30,14 +30,15 @@ interface ProfileDialogProps {
 const ProfileDialog = ({
   isOpen,
   onClose,
-  favoriteUsers,
   userName,
   onLogout,
   onViewProfile,
 }: ProfileDialogProps) => {
+  const phoneNumber = userName;
+  const { favoriteIds, favoriteUsers } = useFavoriteManager(phoneNumber || "");
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-[90vw] md:max-w-[60%] max-h-[90vh] mx-auto p-4 md:p-6 gap-4 overflow-y-auto rounded-lg bg-white shadow-lg">
+      <DialogContent className="w-full max-w-[90vw] md:max-w-[60%] max-h-[80vh] mx-auto p-4 md:p-6 gap-4 overflow-y-auto rounded-lg bg-white shadow-lg">
         <DialogHeader>
           <DialogTitle>My Profile</DialogTitle>
         </DialogHeader>
@@ -48,7 +49,7 @@ const ProfileDialog = ({
               Profile Information
             </TabsTrigger>
             <TabsTrigger className="cursor-pointer" value="favorites">
-              Favorites ({favoriteUsers.length})
+              Favorites ({favoriteIds.length})
             </TabsTrigger>
           </TabsList>
 
@@ -69,13 +70,13 @@ const ProfileDialog = ({
                           <div className="min-w-0">
                             <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2 flex-wrap">
                               Contact Information
-                              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                Verified
-                              </span>
                             </h3>
-                            <p className="text-gray-600 mt-1 truncate">
+                            <p className="text-gray-600 mt-1 truncate flex items-center gap-2">
                               <span className="font-medium text-gray-900">
                                 {userName}
+                              </span>
+                              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                Verified
                               </span>
                             </p>
                           </div>
@@ -107,7 +108,7 @@ const ProfileDialog = ({
 
           {/* Favorites */}
           <TabsContent value="favorites" className="space-y-4">
-            {favoriteUsers.length === 0 ? (
+            {favoriteIds.length === 0 ? (
               <Card className="border-0 shadow-sm">
                 <CardContent className="p-4 sm:p-6">
                   <div className="text-center">
@@ -133,6 +134,7 @@ const ProfileDialog = ({
                   >
                     <CardContent className="p-4">
                       <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center gap-4">
+                        {/* Avatar */}
                         <Avatar className="h-12 w-12 border-2 border-gray-100">
                           <AvatarImage
                             src={user.avatar_url}
@@ -143,13 +145,29 @@ const ProfileDialog = ({
                           </AvatarFallback>
                         </Avatar>
 
+                        {/* User Info */}
                         <div className="flex-1 min-w-0">
+                          {/* Login and GitHub link */}
+                          <p className="text-sm font-semibold text-gray-900 mb-1">
+                            <a
+                              href={user.html_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:underline"
+                            >
+                              @{user.login}
+                            </a>
+                          </p>
+
+                          {/* ID */}
                           <p className="text-xs text-gray-500 font-mono mb-2">
+                            ID:{" "}
                             <span className="font-semibold text-gray-900">
-                              ID: {user.id}
+                              {user.id}
                             </span>
                           </p>
 
+                          {/* Stats */}
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
                             <div className="flex items-center gap-1">
                               <GitBranch className="h-3 w-3" />
@@ -160,7 +178,7 @@ const ProfileDialog = ({
                             </div>
 
                             <div className="flex items-center gap-1">
-                              <GitBranch className="h-3 w-3" />
+                              <Users className="h-3 w-3" />
                               <span className="font-semibold text-gray-900">
                                 {user.followers.toLocaleString()}
                               </span>
@@ -169,22 +187,23 @@ const ProfileDialog = ({
                           </div>
                         </div>
 
+                        {/* Actions */}
                         <div className="flex gap-2 w-full sm:w-auto justify-end">
-                          <Button
+                          {/* <Button
                             variant="ghost"
                             size="sm"
-                            className="p-2 hover:bg-red-50 group w-full sm:w-auto"
+                            className="p-2 hover:bg-red-50 group w-full sm:w-auto cursor-pointer"
                             aria-label={`Remove ${user.login} from favorites`}
                           >
                             <Heart className="h-4 w-4 fill-red-500 text-red-500 group-hover:scale-110 transition-transform" />
-                          </Button>
+                          </Button> */}
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() =>
                               onViewProfile(user.html_url, user.login)
                             }
-                            className="hover:bg-blue-50 hover:border-blue-300 w-full sm:w-auto"
+                            className="hover:bg-blue-50 hover:border-blue-300 w-full sm:w-auto cursor-pointer"
                             aria-label={`View ${user.login}'s GitHub profile`}
                           >
                             <ExternalLink className="h-4 w-4" />
