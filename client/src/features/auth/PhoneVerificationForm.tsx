@@ -18,15 +18,18 @@ interface PhoneVerificationFormProps {
   isSubmitting?: boolean;
 }
 
+const CODE_EXPIRATION_SECONDS = 5 * 60;
+
 export function PhoneVerificationForm({
   onRequestAccessCode,
   onVerifyAccessCode,
   isSubmitting = false,
 }: PhoneVerificationFormProps) {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [accessCode, setAccessCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [accessCode, setAccessCode] = useState<string>("");
   const [step, setStep] = useState<1 | 2>(1);
-  const [resendTimer, setResendTimer] = useState(0);
+  const [resendTimer, setResendTimer] = useState<number>(0);
+  const [otpExpirationTimer, setOtpExpirationTimer] = useState<number>(0);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -37,6 +40,16 @@ export function PhoneVerificationForm({
     }
     return () => clearInterval(timer);
   }, [resendTimer]);
+
+  useEffect(() => {
+    let expirationInterval: NodeJS.Timeout;
+    if (step === 2 && otpExpirationTimer > 0) {
+      expirationInterval = setInterval(() => {
+        setOtpExpirationTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(expirationInterval);
+  }, [otpExpirationTimer, step]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +64,7 @@ export function PhoneVerificationForm({
       await onRequestAccessCode(phoneNumber);
       setStep(2);
       setResendTimer(60);
+      setOtpExpirationTimer(CODE_EXPIRATION_SECONDS);
     } else if (step === 2) {
       if (!isValidAccessCode(accessCode)) {
         toast.error("Please enter a 6-digit access code.");
@@ -70,12 +84,19 @@ export function PhoneVerificationForm({
     }
     await onRequestAccessCode(phoneNumber);
     setResendTimer(60);
+    setOtpExpirationTimer(CODE_EXPIRATION_SECONDS);
+  };
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto space-y-6 p-6 bg-white shadow-lg rounded-xl border border-gray-200"
+      className="w-[28%] max-w-3xl mx-auto space-y-6 p-6 bg-white shadow-lg rounded-xl border border-gray-200"
       aria-labelledby="phone-form-title"
     >
       <div className="flex justify-start mb-2">
@@ -114,7 +135,7 @@ export function PhoneVerificationForm({
           <Input
             id="phone"
             type="tel"
-            placeholder="Enter phone number"
+            placeholder="Enter Vietnamese phone number (e.g., +84987111999)"
             className="pl-10 focus:border-primary focus:ring-primary transition-all duration-200"
             value={phoneNumber}
             onChange={(e) => {
@@ -163,6 +184,21 @@ export function PhoneVerificationForm({
               pattern="\d*"
             />
           </div>
+
+          {/* Countdown for OTP expiration */}
+          {otpExpirationTimer > 0 ? (
+            <p className="mt-2 text-sm text-gray-500">
+              This code will expire in{" "}
+              <b className="font-semibold text-black">
+                {formatTime(otpExpirationTimer)}
+              </b>
+              .
+            </p>
+          ) : (
+            <p className="mt-2 text-sm text-red-500 font-semibold">
+              The code has expired. Please request a new one.
+            </p>
+          )}
 
           <div className="flex justify-between items-center gap-2 mt-2">
             <Button
