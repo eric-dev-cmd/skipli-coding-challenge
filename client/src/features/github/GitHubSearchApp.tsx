@@ -204,7 +204,7 @@ export default function GitHubSearchApp() {
                 value={resultsPerPage.toString()}
                 onValueChange={handleResultsPerPageChange}
               >
-                <SelectTrigger className="w-16 sm:w-20 bg-white cursor-pointer">
+                <SelectTrigger className="w-auto bg-white cursor-pointer">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
