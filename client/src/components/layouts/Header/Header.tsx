@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchBar from "@/components/common/search/SearchBar";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { type GithubUser } from "@/services/githubService";
 
 interface HeaderProps {
@@ -25,9 +24,7 @@ export default function Header({
   onClearSearch,
 }: HeaderProps) {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const [phoneNumber] = useLocalStorage<string>("phoneNumber", "");
-
+  const { isAuthenticated, user } = useAuth();
   return (
     <header className="sticky top-0 z-[100] bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-md">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,7 +69,7 @@ export default function Header({
 
                 {/* Chỉ hiển thị text phoneNumber từ sm trở lên, và nếu quá dài thì ellipsis */}
                 <span className="hidden sm:inline-block text-sm font-medium text-gray-700 truncate max-w-[100px]">
-                  {phoneNumber}
+                  {user?.name}
                 </span>
 
                 {likedUsers.length > 0 && (

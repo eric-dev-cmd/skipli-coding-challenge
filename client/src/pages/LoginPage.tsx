@@ -1,6 +1,6 @@
 import { ROUTES } from "@/constants/routes";
 import { PhoneVerificationForm } from "@/features/auth/PhoneVerificationForm";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useAuth } from "@/hooks/useAuth";
 import { authService } from "@/services/authService";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [, setPhoneNumberStorage] = useLocalStorage<string>("phoneNumber", "");
 
   // Step 1: Request Access Code
   const handleRequestAccessCode = async (phoneNumber: string) => {
@@ -33,8 +33,9 @@ const LoginPage = () => {
         phoneNumber,
         accessCode
       );
+
       if (response.success) {
-        setPhoneNumberStorage(phoneNumber);
+        login(phoneNumber);
         toast.success("Phone number verified successfully!");
         navigate(ROUTES.HOME);
       }
@@ -42,6 +43,7 @@ const LoginPage = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="flex items-center justify-center w-screen h-screen">
       <PhoneVerificationForm
