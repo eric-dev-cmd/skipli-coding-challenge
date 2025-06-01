@@ -3,4 +3,292 @@ info:
   title: Skipli API
   version: 1.0.0
   description: API documentation for Skipli application
+
+servers:
+  - url: http://localhost:5000/api/
+    description: Local development server
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        errorCode:
+          type: string
+    Success:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+        data:
+          type: object
+
 paths:
+  auth/access-code:
+    post:
+      tags:
+        - Access Code
+      summary: Create a new access code
+      description: Generates and sends a new access code to the provided phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phoneNumber
+              properties:
+                phoneNumber:
+                  type: string
+                  example: "+84337934563"
+      responses:
+        "200":
+          description: Access code created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "A verification code has been sent to your phone number."
+                  data:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  auth/validate-code:
+    post:
+      tags:
+        - Access Code
+      summary: Validate an access code
+      description: Validates the provided access code against the phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phoneNumber
+                - accessCode
+              properties:
+                phoneNumber:
+                  type: string
+                  example: "+84337934563"
+                accessCode:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: Access code validated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Access code verified successfully!"
+        "400":
+          description: Invalid request or code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /github/users:
+    get:
+      tags:
+        - GitHub
+      summary: Search GitHub users
+      description: Search for GitHub users based on the provided query
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                      total_count:
+                        type: integer
+                      incomplete_results:
+                        type: boolean
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /github/user/{github_user_id}:
+    get:
+      tags:
+        - GitHub
+      summary: Get GitHub user profile
+      description: Retrieve detailed information about a specific GitHub user
+      parameters:
+        - name: github_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: GitHub username
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /user:
+    get:
+      tags:
+        - User
+      summary: Get user profile
+      description: Retrieve user profile information
+      parameters:
+        - name: phone_number
+          in: query
+          required: true
+          schema:
+            type: string
+          description: User's phone number
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /user/like:
+    post:
+      tags:
+        - User
+      summary: Like a GitHub user
+      description: Add a GitHub user to the user's liked list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - github_user_id
+              properties:
+                phone_number:
+                  type: string
+                  example: "+84337934563"
+                github_user_id:
+                  type: string
+                  example: "octocat"
+      responses:
+        "200":
+          description: Successfully liked the GitHub user
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
