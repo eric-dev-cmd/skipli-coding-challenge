@@ -101,7 +101,7 @@ export function PhoneVerificationForm({
           <Input
             id="phone"
             type="tel"
-            placeholder="+84337934563"
+            placeholder="Enter phone number"
             className="pl-10 focus:border-primary focus:ring-primary transition-all duration-200"
             value={phoneNumber}
             onChange={(e) => {

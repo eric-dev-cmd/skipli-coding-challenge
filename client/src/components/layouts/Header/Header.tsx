@@ -97,7 +97,7 @@ export default function Header({
                 className="
                   text-xs sm:text-sm
                   px-3 sm:px-4 py-1.5 sm:py-2
-                  rounded-full hover:bg-gray-100 transition-all duration-200
+                  rounded-full transition-all duration-200
                   cursor-pointer
                 "
               >
