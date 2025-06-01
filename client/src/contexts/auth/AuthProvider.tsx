@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { AuthContext } from "./AuthContext";
+import toast from "react-hot-toast";
 
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -28,6 +29,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     clearStoredPhoneNumber();
     setUser(null);
+    toast.success("Logged out successfully", {
+      icon: "👋",
+      duration: 2000,
+    });
   };
 
   return (

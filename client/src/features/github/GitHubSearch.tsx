@@ -1,15 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
 import { LayoutGrid, Search, Table2, TrendingUp, Users } from "lucide-react";
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import LoadingSpinner from "@/components/common/loading/LoadingSpinner";
+import { Pagination } from "@/components/common/pagination";
 import {
   InitialSearchState,
   NoResultsState,
-} from "@/components/common/EmptyState";
-import LoadingSpinner from "@/components/common/loading/LoadingSpinner";
+} from "@/components/common/states/EmptyState";
+import { ErrorState } from "@/components/common/states/ErrorState";
 import Header from "@/components/layouts/Header/Header";
+import ScrollToTop from "@/components/ui/scroll-to-top";
 import {
   Select,
   SelectContent,
@@ -21,19 +25,21 @@ import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
 import { useGitHubSearch } from "@/hooks/useGitHubSearch";
 import { type GithubUser } from "@/services/githubService";
-import { UsersGrid } from "./view/UsersGrid";
-import { UsersTable } from "./view/UsersTable";
-import { Pagination } from "@/components/common/pagination";
-import ScrollToTop from "@/components/ui/scroll-to-top";
-import { ErrorState } from "@/components/common/ErrorState";
+import toast from "react-hot-toast";
+
+
+const ProfileDialog = lazy(() => import("./components/dialogs/ProfileDialog"));
+const UsersTable = lazy(() => import("./components/users/UsersTable"));
+const UsersGrid = lazy(() => import("./components/users/UsersGrid"));
 
 export default function GitHubSearchApp() {
   const navigate = useNavigate();
 
   const [likedUsers, setLikedUsers] = useState<GithubUser[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const {
     searchQuery,
     debouncedSearchQuery,
@@ -65,6 +71,7 @@ export default function GitHubSearchApp() {
 
   // Handle like/unlike with database sync
   const handleLike = async (userId: number) => {
+    console.log("eric userId: ", userId);
     if (!isAuthenticated) {
       navigate(ROUTES.LOGIN);
       return;
@@ -97,6 +104,21 @@ export default function GitHubSearchApp() {
     }
   };
 
+  const handleUnlike = (userId: number, username: string) => {
+    toast.success(`Removed ${username} from favorites`, {
+      icon: "💔",
+      duration: 2000,
+    });
+  };
+
+  const handleViewProfile = (url: string, username: string) => {
+    window.open(url, "_blank");
+    toast.success(`Opening ${username}'s profile`, {
+      icon: "🔗",
+      duration: 1500,
+    });
+  };
+
   const handleClearSearch = () => {
     clearSearch();
   };
@@ -104,6 +126,12 @@ export default function GitHubSearchApp() {
   const handleSuggestionClick = (suggestion: string) => {
     const cleanSuggestion = suggestion.replace(/^Try "/, "").replace(/"$/, "");
     setSearchQuery(cleanSuggestion);
+  };
+
+  const handleLogout = () => {
+    setSearchQuery("");
+    setIsProfileModalOpen(false);
+    logout();
   };
 
   const preparedUsers = useMemo(
@@ -123,6 +151,7 @@ export default function GitHubSearchApp() {
         isLoading={isLoading}
         likedUsers={likedUsers}
         onClearSearch={handleClearSearch}
+        onProfileClick={() => setIsProfileModalOpen(true)}
       />
 
       {/* Main Content */}
@@ -252,7 +281,7 @@ export default function GitHubSearchApp() {
           />
         )}
         {!isLoading && !isError && !isInitialState && !isEmpty && (
-          <>
+          <Suspense fallback={<LoadingSpinner message="Loading results..." />}>
             {viewMode === "table" ? (
               <UsersTable
                 users={preparedUsers}
@@ -268,7 +297,7 @@ export default function GitHubSearchApp() {
                 resultsPerPage={resultsPerPage}
               />
             )}
-          </>
+          </Suspense>
         )}
 
         {!isLoading && !isError && hasResults && (
@@ -281,6 +310,24 @@ export default function GitHubSearchApp() {
           />
         )}
       </main>
+      {isProfileModalOpen ? (
+        <Suspense fallback={<LoadingSpinner />}>
+          {isProfileModalOpen && (
+            <ProfileDialog
+              isOpen={isProfileModalOpen}
+              onClose={() => setIsProfileModalOpen(false)}
+              likedUsers={likedUsers}
+              userName={user?.name}
+              onLogout={handleLogout}
+              onUnlike={handleUnlike}
+              onViewProfile={handleViewProfile}
+            />
+          )}
+        </Suspense>
+      ) : (
+        ""
+      )}
+
       <ScrollToTop />
     </div>
   );

@@ -19,12 +19,12 @@ interface UsersTableProps {
   resultsPerPage: number;
 }
 
-export function UsersTable({
+const UsersTable = ({
   users,
   handleLike,
   currentPage,
   resultsPerPage,
-}: UsersTableProps) {
+}: UsersTableProps) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
       <div className="w-full overflow-x-auto">
@@ -158,4 +158,6 @@ export function UsersTable({
       </div>
     </div>
   );
-}
+};
+
+export default UsersTable;

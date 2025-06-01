@@ -12,12 +12,12 @@ interface UsersGridProps {
   resultsPerPage: number;
 }
 
-export function UsersGrid({
+const UsersGrid = ({
   users,
   handleLike,
   currentPage,
   resultsPerPage,
-}: UsersGridProps) {
+}: UsersGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {users.map((user, index) => {
@@ -137,4 +137,6 @@ export function UsersGrid({
       })}
     </div>
   );
-}
+};
+
+export default UsersGrid;

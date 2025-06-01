@@ -14,6 +14,7 @@ interface HeaderProps {
   isLoading: boolean;
   likedUsers: GithubUser[];
   onClearSearch: () => void;
+  onProfileClick: () => void;
 }
 
 export default function Header({
@@ -22,6 +23,7 @@ export default function Header({
   isLoading,
   likedUsers,
   onClearSearch,
+  onProfileClick,
 }: HeaderProps) {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
@@ -57,7 +59,7 @@ export default function Header({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => console.log("Profile clicked")}
+                onClick={onProfileClick}
                 className="
                   relative flex items-center gap-1 sm:gap-2
                   px-2 sm:px-3 py-1.5 sm:py-2
