@@ -5,7 +5,7 @@ import { config } from "./config";
 import githubRoutes from "./routes/github.routes";
 import accessCodeRoutes from "./routes/accessCode.routes";
 import userRoutes from "./routes/user.routes";
-import { db } from "./config/firebase.config";
+import { db } from "./config/firebase";
 import { server } from "./server";
 
 const cors = require("cors");

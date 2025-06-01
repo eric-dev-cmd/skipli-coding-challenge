@@ -1,14 +1,14 @@
-import { normalizePhoneNumber } from "../utils/phone";
-import { db } from "../config/firebase.config";
+import { normalizePhoneNumber } from "../utils/phoneHelper";
+import { db } from "../config/firebase";
 import { generateRandomCode } from "../utils/generateRandomCode";
 import { sendSMS } from "./twilio.service";
+import { clearAccessCode, getUserRef } from "@/utils/firebaseHelper";
 
 const CODE_EXPIRATION_MINUTES = 5;
 const COOLDOWN_MS = 60 * 1000; // 1 phút
 
 export const createNewAccessCodeService = async (inputPhoneNumber: string) => {
-  const phoneNumber = normalizePhoneNumber(inputPhoneNumber);
-  const ref = db.ref(`users/${phoneNumber}`);
+  const ref = getUserRef(inputPhoneNumber);
   const snapshot = await ref.once("value");
   const data = snapshot.val();
 
@@ -50,8 +50,7 @@ export const validateAccessCodeService = async (
   inputPhoneNumber: string,
   code: string
 ) => {
-  const phoneNumber = normalizePhoneNumber(inputPhoneNumber);
-  const ref = db.ref(`users/${phoneNumber}`);
+  const ref = getUserRef(inputPhoneNumber);
   const snapshot = await ref.once("value");
   const data = snapshot.val();
 
@@ -68,9 +67,9 @@ export const validateAccessCodeService = async (
   const expirationTime = createdAt + CODE_EXPIRATION_MINUTES * 60 * 1000;
 
   if (now > expirationTime) {
-    await ref.update({ accessCode: "", accessCodeCreatedAt: null });
+    await clearAccessCode(ref);
     throw new Error("Access code expired");
   }
 
-  await ref.update({ accessCode: "", accessCodeCreatedAt: null });
+  await clearAccessCode(ref);
 };

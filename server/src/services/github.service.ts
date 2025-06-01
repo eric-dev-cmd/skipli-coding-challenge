@@ -1,6 +1,6 @@
-import { validatePaginationParams } from "@/utils/validate.helper";
-import { githubAxios } from "../config/github.config";
-import { getUserDetails } from "@/utils/github.helper";
+import { validatePaginationParams } from "@/utils/validateHelper";
+import { githubAxios } from "../config/github";
+import { getUserDetails } from "@/utils/githubHelper";
 
 export const searchGithubUsersService = async (
   q: string,

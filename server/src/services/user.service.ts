@@ -1,13 +1,13 @@
-import { normalizePhoneNumber } from "../utils/phone";
+import { normalizePhoneNumber } from "../utils/phoneHelper";
 import { findGithubUserProfileService } from "./github.service";
-import { db } from "../config/firebase.config";
+import { db } from "../config/firebase";
+import { getUserRef } from "@/utils/firebaseHelper";
 
 export const likeGithubUserService = async (
   inputPhoneNumber: string,
   githubUserId: number
 ) => {
-  const phoneNumber = normalizePhoneNumber(inputPhoneNumber);
-  const userRef = db.ref(`users/${phoneNumber}`);
+  const userRef = getUserRef(inputPhoneNumber);
   const snapshot = await userRef.once("value");
 
   if (!snapshot.exists()) {

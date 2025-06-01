@@ -1,4 +1,4 @@
-import { githubAxios } from "@/config/github.config";
+import { githubAxios } from "@/config/github";
 
 export async function getUserDetails(items: any[]) {
   return Promise.all(
