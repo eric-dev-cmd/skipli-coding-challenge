@@ -115,7 +115,7 @@ app.use(
 // Routes
 app.use("/api/auth", otpRateLimiter, accessCodeRoutes);
 app.use("/api/github", githubRateLimiter, githubRoutes);
-app.use("/api/user-profile", userProfileRateLimiter, userRoutes);
+app.use("/api/user", userProfileRateLimiter, userRoutes);
 
 // 404 + error handler
 app.use(notFound);

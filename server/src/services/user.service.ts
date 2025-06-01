@@ -31,13 +31,22 @@ export const likeGithubUserService = async (
       }
       return likes;
     },
-    (error, committed) => {
-      if (error) throw new Error("Transaction failed");
-      if (!committed) throw new Error("Like/unlike not committed");
+    (error, committed, snapshot) => {
+      if (error) {
+        console.error("Transaction error:", error);
+        throw new Error("Transaction failed");
+      }
+      if (!committed) {
+        console.warn("Transaction not committed");
+        throw new Error("Like/unlike not committed");
+      }
     }
   );
 
-  return { success: true, action };
+  return {
+    success: true,
+    action,
+  };
 };
 
 export const getUserProfileService = async (inputPhoneNumber: string) => {

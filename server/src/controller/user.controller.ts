@@ -12,8 +12,8 @@ export const likeGithubUser = async (req: Request, res: Response) => {
   }
 
   try {
-    await likeGithubUserService(phone_number, github_user_id);
-    return res.sendStatus(200);
+    const result = await likeGithubUserService(phone_number, github_user_id);
+    return res.status(200).json(result);
   } catch (error: any) {
     return res.status(400).json({ error: error.message });
   }
