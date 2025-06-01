@@ -73,13 +73,13 @@ const otpRateLimiter = createRateLimiter(
 
 const githubRateLimiter = createRateLimiter(
   60 * 1000,
-  30,
+  60,
   "Too many GitHub API requests. Please slow down."
 );
 
 const userProfileRateLimiter = createRateLimiter(
   60 * 1000,
-  20,
+  30,
   "Too many profile requests. Please try again later."
 );
 

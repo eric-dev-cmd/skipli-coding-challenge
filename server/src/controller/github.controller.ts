@@ -43,14 +43,16 @@ export const searchGithubUsers = async (req: Request, res: Response) => {
     return res.status(200).json(result);
   } catch (error: any) {
     const status = error.response?.status || 500;
-    const message =
-      error.response?.data?.message ||
-      "Sorry, something went wrong while searching for GitHub users. Please try again.";
-    const errorCode =
-      error.response?.status === 403
-        ? "RATE_LIMIT_EXCEEDED"
-        : "INTERNAL_SERVER_ERROR";
+    let githubErrorMessage = "Unknown error";
+    if (error.toString) githubErrorMessage = error.toString();
+    const isRateLimitExceeded = githubErrorMessage.includes(
+      "API rate limit exceeded"
+    );
+    const errorCode = isRateLimitExceeded
+      ? "RATE_LIMIT_EXCEEDED"
+      : "INTERNAL_SERVER_ERROR";
 
+    const message = githubErrorMessage;
     return res.status(status).json({
       success: false,
       message,
