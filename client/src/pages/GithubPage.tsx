@@ -1,7 +1,7 @@
-import GitHubSearchApp from "@/features/github/GitHubSearchApp";
+import GitHubSearch from "@/features/github/GitHubSearch";
 
 const GitHubPage = () => {
-  return <GitHubSearchApp />;
+  return <GitHubSearch />;
 };
 
 export default GitHubPage;

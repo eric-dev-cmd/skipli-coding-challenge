@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Search, Table2, TrendingUp, Users } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -25,6 +25,7 @@ import { UsersGrid } from "./view/UsersGrid";
 import { UsersTable } from "./view/UsersTable";
 import { Pagination } from "@/components/common/pagination";
 import ScrollToTop from "@/components/ui/scroll-to-top";
+import { ErrorState } from "@/components/common/ErrorState";
 
 export default function GitHubSearchApp() {
   const navigate = useNavigate();
@@ -105,6 +106,15 @@ export default function GitHubSearchApp() {
     setSearchQuery(cleanSuggestion);
   };
 
+  const preparedUsers = useMemo(
+    () =>
+      searchUsers.map((user) => ({
+        ...user,
+        isLiked: user.isLiked ?? false,
+      })),
+    [searchUsers]
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header
@@ -150,24 +160,19 @@ export default function GitHubSearchApp() {
               </div>
 
               {searchUsers && hasResults && (
-                <div className="flex sm:hidden items-center gap-2">
-                  <Badge className="text-xs px-3 py-1 shadow-sm whitespace-nowrap">
-                    <TrendingUp className="h-3 w-3 mr-1" />
+                <div className="flex items-center gap-2">
+                  <Badge
+                    className={`
+        shadow-sm whitespace-nowrap
+        text-xs px-3 py-1 sm:text-sm sm:px-4 sm:py-2
+      `}
+                  >
+                    <TrendingUp className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                     {totalResults.toLocaleString()} results found
                   </Badge>
                 </div>
               )}
             </div>
-
-            {/* Badge on larger screens */}
-            {searchUsers && hasResults && (
-              <div className="hidden sm:flex items-center gap-2">
-                <Badge className="text-sm px-4 py-2 shadow-sm whitespace-nowrap">
-                  <TrendingUp className="h-4 w-4 mr-1" />
-                  {totalResults.toLocaleString()} results found
-                </Badge>
-              </div>
-            )}
           </div>
 
           {/* Right side: View Mode + Per-page selector */}
@@ -229,68 +234,41 @@ export default function GitHubSearchApp() {
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoading && (
           <LoadingSpinner
             message="Loading GitHub users..."
             size="lg"
             color="primary"
           />
-        ) : isError ? (
-          <div className="flex flex-col items-center justify-center py-16 space-y-4">
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 text-red-600 dark:text-red-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Failed to load GitHub users
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md text-center">
-              An error occurred while fetching data from the GitHub API. Please
-              check your internet connection or try again later.
-            </p>
-            <Button onClick={() => refetch()} variant="outline">
-              Try Again
-            </Button>
-          </div>
-        ) : isInitialState ? (
+        )}
+        {isError && <ErrorState onRetry={refetch} />}
+        {isInitialState && (
           <InitialSearchState onSuggestionClick={handleSuggestionClick} />
-        ) : isEmpty ? (
+        )}
+        {isEmpty && (
           <NoResultsState
             searchQuery={debouncedSearchQuery}
             onTryAgain={handleClearSearch}
           />
-        ) : viewMode === "table" ? (
-          <UsersTable
-            users={searchUsers.map((user) => ({
-              ...user,
-              isLiked: user.isLiked ?? false,
-            }))}
-            handleLike={handleLike}
-            currentPage={currentPage}
-            resultsPerPage={resultsPerPage}
-          />
-        ) : (
-          <UsersGrid
-            users={searchUsers.map((user) => ({
-              ...user,
-              isLiked: user.isLiked ?? false,
-            }))}
-            handleLike={handleLike}
-            currentPage={currentPage}
-            resultsPerPage={resultsPerPage}
-          />
+        )}
+        {!isLoading && !isError && !isInitialState && !isEmpty && (
+          <>
+            {viewMode === "table" ? (
+              <UsersTable
+                users={preparedUsers}
+                handleLike={handleLike}
+                currentPage={currentPage}
+                resultsPerPage={resultsPerPage}
+              />
+            ) : (
+              <UsersGrid
+                users={preparedUsers}
+                handleLike={handleLike}
+                currentPage={currentPage}
+                resultsPerPage={resultsPerPage}
+              />
+            )}
+          </>
         )}
 
         {!isLoading && !isError && hasResults && (
