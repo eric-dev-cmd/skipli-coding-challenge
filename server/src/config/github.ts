@@ -24,11 +24,48 @@ export const BASE_URL = "https://api.github.com";
  *
  * Reference: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
  */
-
 export const githubAxios = axios.create({
   baseURL: BASE_URL,
   headers: {
-    Authorization: `Bearer ${GITHUB_API_TOKEN}`,
-    Accept: "application/vnd.github+json",
+    Accept: "application/vnd.github.v3+json",
+    ...(GITHUB_API_TOKEN
+      ? { Authorization: `Bearer ${GITHUB_API_TOKEN}` }
+      : {}),
   },
+  timeout: 10000,
 });
+
+githubAxios.interceptors.response.use(
+  (response) => {
+    const limit = response.headers["x-ratelimit-limit"];
+    const remaining = response.headers["x-ratelimit-remaining"];
+    const reset = response.headers["x-ratelimit-reset"];
+
+    if (limit && remaining && reset) {
+      console.info(
+        `📊 GitHub API Rate Limit — Limit: ${limit}, Remaining: ${remaining}, Resets at: ${new Date(
+          Number(reset) * 1000
+        ).toISOString()}`
+      );
+    }
+
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      const limit = error.response.headers["x-ratelimit-limit"];
+      const remaining = error.response.headers["x-ratelimit-remaining"];
+      const reset = error.response.headers["x-ratelimit-reset"];
+
+      if (limit && remaining && reset) {
+        console.warn(
+          `⚠️ GitHub API Rate Limit — Limit: ${limit}, Remaining: ${remaining}, Resets at: ${new Date(
+            Number(reset) * 1000
+          ).toISOString()}`
+        );
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);

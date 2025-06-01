@@ -37,7 +37,39 @@ export const config = {
   githubApiToken: process.env.GITHUB_API_TOKEN || "",
   corsOrigin: process.env.CORS_ORIGIN,
   rateLimit: {
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || "900000", 10), // default 15 minutes
-    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "100", 10),
+    otp: {
+      windowMs: parseInt(process.env.OTP_RATE_LIMIT_WINDOW_MS || "60000", 10),
+      maxRequests: parseInt(process.env.OTP_RATE_LIMIT_MAX_REQUESTS || "3", 10),
+    },
+    github: {
+      windowMs: parseInt(
+        process.env.GITHUB_RATE_LIMIT_WINDOW_MS || "60000",
+        10
+      ),
+      maxRequests: parseInt(
+        process.env.GITHUB_RATE_LIMIT_MAX_REQUESTS || "60",
+        10
+      ),
+    },
+    userProfile: {
+      windowMs: parseInt(
+        process.env.USER_PROFILE_RATE_LIMIT_WINDOW_MS || "60000",
+        10
+      ),
+      maxRequests: parseInt(
+        process.env.USER_PROFILE_RATE_LIMIT_MAX_REQUESTS || "30",
+        10
+      ),
+    },
+    swagger: {
+      windowMs: parseInt(
+        process.env.SWAGGER_RATE_LIMIT_WINDOW_MS || "60000",
+        10
+      ),
+      maxRequests: parseInt(
+        process.env.SWAGGER_RATE_LIMIT_MAX_REQUESTS || "10",
+        10
+      ),
+    },
   },
 };

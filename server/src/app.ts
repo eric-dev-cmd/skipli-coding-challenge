@@ -66,26 +66,26 @@ const createRateLimiter = (windowMs: number, max: number, message: string) => {
 
 // Rate Limiters
 const otpRateLimiter = createRateLimiter(
-  config.rateLimit.windowMs,
-  config.rateLimit.maxRequests,
+  config.rateLimit.otp.windowMs,
+  config.rateLimit.otp.maxRequests,
   "Too many OTP requests. Please try again later."
 );
 
 const githubRateLimiter = createRateLimiter(
-  60 * 1000,
-  60,
+  config.rateLimit.github.windowMs,
+  config.rateLimit.github.maxRequests,
   "Too many GitHub API requests. Please slow down."
 );
 
 const userProfileRateLimiter = createRateLimiter(
-  60 * 1000,
-  30,
+  config.rateLimit.userProfile.windowMs,
+  config.rateLimit.userProfile.maxRequests,
   "Too many profile requests. Please try again later."
 );
 
 const swaggerRateLimiter = createRateLimiter(
-  60 * 1000,
-  10,
+  config.rateLimit.swagger.windowMs,
+  config.rateLimit.swagger.maxRequests,
   "Too many documentation requests."
 );
 
