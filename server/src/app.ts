@@ -77,12 +77,6 @@ const githubRateLimiter = createRateLimiter(
   "Too many GitHub API requests. Please slow down."
 );
 
-const userProfileRateLimiter = createRateLimiter(
-  config.rateLimit.userProfile.windowMs,
-  config.rateLimit.userProfile.maxRequests,
-  "Too many profile requests. Please try again later."
-);
-
 const swaggerRateLimiter = createRateLimiter(
   config.rateLimit.swagger.windowMs,
   config.rateLimit.swagger.maxRequests,
@@ -115,7 +109,7 @@ app.use(
 // Routes
 app.use("/api/auth", otpRateLimiter, accessCodeRoutes);
 app.use("/api/github", githubRateLimiter, githubRoutes);
-app.use("/api/user", userProfileRateLimiter, userRoutes);
+app.use("/api/user", userRoutes);
 
 // 404 + error handler
 app.use(notFound);

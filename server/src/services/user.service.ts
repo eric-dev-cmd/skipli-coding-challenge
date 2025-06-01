@@ -11,7 +11,7 @@ export const likeGithubUserService = async (
   const snapshot = await userRef.once("value");
 
   if (!snapshot.exists()) {
-    throw new Error("User does not exist. Please authenticate first.");
+    throw new Error("User account not found. Please log in to continue.");
   }
 
   const likesRef = userRef.child("favorite_github_users");
@@ -55,7 +55,7 @@ export const getUserProfileService = async (inputPhoneNumber: string) => {
   const snapshot = await ref.once("value");
 
   if (!snapshot.exists()) {
-    throw new Error("User not found");
+    throw new Error("User account not found. Please log in to continue.");
   }
 
   const data = snapshot.val();
