@@ -24,7 +24,6 @@ interface ProfileDialogProps {
   favoriteUsers: GithubUser[];
   userName?: string;
   onLogout: () => void;
-  onUnlike: (userId: number, username: string) => void;
   onViewProfile: (url: string, username: string) => void;
 }
 
@@ -34,7 +33,6 @@ const ProfileDialog = ({
   favoriteUsers,
   userName,
   onLogout,
-  onUnlike,
   onViewProfile,
 }: ProfileDialogProps) => {
   return (
@@ -175,7 +173,6 @@ const ProfileDialog = ({
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => onUnlike(user.id, user.login)}
                             className="p-2 hover:bg-red-50 group w-full sm:w-auto"
                             aria-label={`Remove ${user.login} from favorites`}
                           >

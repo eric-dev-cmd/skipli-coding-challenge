@@ -6,6 +6,8 @@ import { KeyIcon, PhoneIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { isValidAccessCode, isValidPhoneNumber } from "@/utils/validations";
+import { Link } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 
 interface PhoneVerificationFormProps {
   onRequestAccessCode: (phoneNumber: string) => Promise<void>;
@@ -76,6 +78,17 @@ export function PhoneVerificationForm({
       className="max-w-md mx-auto space-y-6 p-6 bg-white shadow-lg rounded-xl border border-gray-200"
       aria-labelledby="phone-form-title"
     >
+      <div className="flex justify-start mb-2">
+        <Link
+          to={ROUTES.HOME}
+          className="
+      inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors duration-200
+    "
+        >
+          <span className="text-lg">←</span> Back to Search
+        </Link>
+      </div>
+
       <h1 className="text-2xl font-bold text-center text-primary mb-2">
         Skipli Frontend Coding Challenge
       </h1>

@@ -1,7 +1,7 @@
 import { ROUTES } from "@/constants/routes";
 import { PhoneVerificationForm } from "@/features/auth/PhoneVerificationForm";
 import { useAuth } from "@/hooks/useAuth";
-import { authService } from "@/services/authService";
+import authService from "@/services/authService";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
