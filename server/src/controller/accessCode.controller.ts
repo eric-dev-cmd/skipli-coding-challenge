@@ -56,9 +56,7 @@ export const validateAccessCode = async (req: Request, res: Response) => {
     console.error("validateAccessCode error:", error);
 
     let errorCode = "INVALID_ACCESS_CODE";
-    let message =
-      error.message ||
-      "The access code you entered is incorrect. Please double-check and try again.";
+    let message = error.message || "Invalid code. Please try again.";
 
     if (error.message === "Access code expired") {
       errorCode = "ACCESS_CODE_EXPIRED";

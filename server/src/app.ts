@@ -56,7 +56,7 @@ const createRateLimiter = (windowMs: number, max: number, message: string) => {
 const otpRateLimiter = createRateLimiter(
   config.rateLimit.otp.windowMs,
   config.rateLimit.otp.maxRequests,
-  "Too many OTP requests. Please try again later."
+  "Too many OTP requests. Please try again after 60 seconds."
 );
 
 const githubRateLimiter = createRateLimiter(
