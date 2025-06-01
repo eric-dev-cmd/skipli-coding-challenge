@@ -24,6 +24,7 @@ import { type GithubUser } from "@/services/githubService";
 import { UsersGrid } from "./view/UsersGrid";
 import { UsersTable } from "./view/UsersTable";
 import { Pagination } from "@/components/common/pagination";
+import ScrollToTop from "@/components/ui/scroll-to-top";
 
 export default function GitHubSearchApp() {
   const navigate = useNavigate();
@@ -302,6 +303,7 @@ export default function GitHubSearchApp() {
           />
         )}
       </main>
+      <ScrollToTop />
     </div>
   );
 }
