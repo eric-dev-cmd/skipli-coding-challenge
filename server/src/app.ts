@@ -16,18 +16,6 @@ const YAML = require("yamljs");
 const logger = require("morgan");
 const swaggerUi = require("swagger-ui-express");
 
-// test Firebase connection
-(async () => {
-  try {
-    await db
-      .ref("test-connection")
-      .set({ status: "ok", timestamp: new Date().toISOString() });
-    // console.log("✅ Firebase OK");
-  } catch (err) {
-    // console.error("❌ Firebase failed:", err);
-  }
-})();
-
 // Initialize Express app
 const app = express();
 
