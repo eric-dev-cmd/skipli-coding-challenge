@@ -6,6 +6,7 @@ import githubRoutes from "./routes/github.routes";
 import accessCodeRoutes from "./routes/accessCode.routes";
 import userRoutes from "./routes/user.routes";
 import { db } from "./config/firebase.config";
+import { server } from "./server";
 
 const cors = require("cors");
 const helmet = require("helmet");
@@ -31,20 +32,62 @@ const swaggerUi = require("swagger-ui-express");
 const app = express();
 
 // Security headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
+  })
+);
 
-// Rate limiting
-const otpRateLimiter = rateLimit({
-  windowMs: config.rateLimit.windowMs,
-  max: config.rateLimit.maxRequests,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: "Too many requests. Please try again later.",
-    errorCode: "RATE_LIMIT_EXCEEDED",
-  },
-});
+// Rate Limiters Configuration
+const createRateLimiter = (windowMs: number, max: number, message: string) => {
+  return rateLimit({
+    windowMs,
+    max,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      success: false,
+      message,
+      errorCode: "RATE_LIMIT_EXCEEDED",
+    },
+    // Skip successful requests from counting against rate limit
+    skipSuccessfulRequests: false,
+    // Skip failed requests from counting against rate limit
+    skipFailedRequests: false,
+  });
+};
+
+// Rate Limiters
+const otpRateLimiter = createRateLimiter(
+  config.rateLimit.windowMs,
+  config.rateLimit.maxRequests,
+  "Too many OTP requests. Please try again later."
+);
+
+const githubRateLimiter = createRateLimiter(
+  60 * 1000,
+  30,
+  "Too many GitHub API requests. Please slow down."
+);
+
+const userProfileRateLimiter = createRateLimiter(
+  60 * 1000,
+  20,
+  "Too many profile requests. Please try again later."
+);
+
+const swaggerRateLimiter = createRateLimiter(
+  60 * 1000,
+  10,
+  "Too many documentation requests."
+);
 
 // Middleware
 app.use(
@@ -55,26 +98,44 @@ app.use(
 );
 
 // Body parsing
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(compression());
 app.use(logger("dev"));
 
 // Swagger documentation
 const swaggerDocument = YAML.load("./swagger.yaml");
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(
+  "/api/docs",
+  swaggerRateLimiter,
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument)
+);
 
 // Routes
 app.use("/api/auth", otpRateLimiter, accessCodeRoutes);
-app.use("/api/github", githubRoutes);
-app.use("/api/user-profile", userRoutes);
+app.use("/api/github", githubRateLimiter, githubRoutes);
+app.use("/api/user-profile", userProfileRateLimiter, userRoutes);
 
 // 404 + error handler
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully");
+  server.close(() => {
+    console.log("Closed out remaining connections");
+    process.exit(0);
+  });
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received, shutting down gracefully");
+  server.close(() => {
+    console.log("Closed out remaining connections");
+    process.exit(0);
+  });
 });
 
 export default app;

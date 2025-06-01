@@ -37,6 +37,7 @@ export const searchGithubUsersService = async (
     );
   }
 };
+
 export const findGithubUserProfileService = async (github_user_id: string) => {
   const response = await githubAxios.get(`/user/${github_user_id}`);
   const { login, id, avatar_url, html_url, public_repos, followers } =
