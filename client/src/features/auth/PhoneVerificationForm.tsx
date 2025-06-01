@@ -56,7 +56,7 @@ export function PhoneVerificationForm({
     if (step === 1) {
       if (!isValidPhoneNumber(phoneNumber)) {
         toast.error(
-          "Please enter a valid phone number in E.164 format (e.g., +84337934563)."
+          " Please enter a valid Vietnamese phone number (e.g., +84337934563)"
         );
         return;
       }
@@ -78,7 +78,7 @@ export function PhoneVerificationForm({
   const handleResendCode = async () => {
     if (!isValidPhoneNumber(phoneNumber)) {
       toast.error(
-        "Please enter a valid phone number in E.164 format (e.g., +84337934563)."
+        " Please enter a valid Vietnamese phone number (e.g., +84337934563)"
       );
       return;
     }

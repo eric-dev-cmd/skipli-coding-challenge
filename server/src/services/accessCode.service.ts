@@ -8,6 +8,7 @@ const CODE_EXPIRATION_MINUTES = 5;
 const COOLDOWN_MS = 60 * 1000; // 1 phút
 
 export const createNewAccessCodeService = async (inputPhoneNumber: string) => {
+  const phoneNumber = normalizePhoneNumber(inputPhoneNumber);
   const ref = getUserRef(inputPhoneNumber);
   const snapshot = await ref.once("value");
   const data = snapshot.val();
@@ -32,16 +33,16 @@ export const createNewAccessCodeService = async (inputPhoneNumber: string) => {
     accessCode: code,
     accessCodeCreatedAt: now,
   });
-  // 30/05/2025 - test
-  // try {
-  //   await sendSMS(phoneNumber, `Your access code is: ${code}`);
-  // } catch (smsError: any) {
-  //   console.error(
-  //     `[SMS_ERROR] Failed to send code to ${phoneNumber}`,
-  //     smsError
-  //   );
-  //   throw new Error("Failed to send SMS. Please try again later.");
-  // }
+
+  try {
+    await sendSMS(phoneNumber, `Your access code is: ${code}`);
+  } catch (smsError: any) {
+    console.error(
+      `[SMS_ERROR] Failed to send code to ${phoneNumber}`,
+      smsError
+    );
+    throw new Error("Failed to send SMS. Please try again later.");
+  }
 
   return code;
 };
