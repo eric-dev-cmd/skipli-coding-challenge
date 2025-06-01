@@ -69,6 +69,7 @@ export const useGitHubSearch = (options: UseGitHubSearchOptions = {}) => {
     enabled: debouncedSearchQuery.length > 0 && !searchState.isCleared,
     staleTime,
     gcTime,
+    retry: false,
   });
 
   // Actions
