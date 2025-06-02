@@ -21,13 +21,13 @@ A modern web application for searching GitHub users. It includes authentication 
 
 ---
 
-## 🎯 Introduction
+## Introduction
 
 This app allows users to search for GitHub user profiles, mark them as favorites, and ensures that the liked state persists even after a page refresh. The application supports secure user authentication and phone number verification via Twilio, and it is fully responsive across both desktop and mobile devices.
 
 ---
 
-## ✨ Features
+## Features
 
 - Login using phone number (2-step: enter phone number and access code)
 - Search for GitHub users (table and grid views) — no login required
@@ -39,11 +39,13 @@ This app allows users to search for GitHub user profiles, mark them as favorites
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 The project is organized into two main directories: client (frontend) and server (backend). Below is an overview of the structure:
 
 ### Client (Frontend)
+
+````text
 
 client/ # Frontend code (React + Vite + TypeScript)
 │ ├── dist/ # Build output directory (generated after build)
@@ -81,7 +83,11 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── tsconfig.node.json # TypeScript configuration for Node.js
 │ └── vite.config.ts # Vite configuration file
 
+```text
+
 ### Server (Backend)
+
+```text
 
 ├── server/ # Backend code (Node.js + Express + TypeScript)
 │ ├── dist/ # Build output directory (generated after build)
@@ -103,9 +109,11 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── swagger.yaml # Swagger/OpenAPI specification
 │ └── tsconfig.json # TypeScript configuration
 
+```text
+
 ---
 
-## 🚀 Usage
+## Usage
 
 ### 1️⃣ Login Flow
 
@@ -160,7 +168,7 @@ client/ # Frontend code (React + Vite + TypeScript)
 
 ---
 
-## 🖼️ Screenshots
+## Screenshots
 
 > All screenshots are stored in the `screenshots` folder for easy management.
 
@@ -197,11 +205,11 @@ pnpm dev
 # Run the backend
 cd ../server
 pnpm dev
-```
+````
 
 ---
 
-## 🌐 Environment Variables
+## Environment Variables
 
 This project uses environment variables for both the frontend and backend. Make sure to create .env files following these examples:
 
@@ -268,7 +276,7 @@ SWAGGER_RATE_LIMIT_MAX_REQUESTS=10
 
 ---
 
-## 📝 Notes
+## Notes
 
 - 📌 Copy `.env.example` to `.env` in both `client` and `server` directories, then fill in the required values.
 - 📌 Make sure to replace all placeholder values like `your_..._here` with your actual credentials and URLs.
@@ -276,4 +284,3 @@ SWAGGER_RATE_LIMIT_MAX_REQUESTS=10
 - 📌 For GitHub API, create a personal token at [GitHub Developer Settings](https://github.com/settings/tokens).
 - 📌 If using Firebase, ensure you have a valid `serviceAccountKey.json` file placed in the `server/` directory. Refer to [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup#initialize-sdk) for instructions.
 - 📌 All screenshots should be placed in the `screenshots` folder following the paths listed above.
-
