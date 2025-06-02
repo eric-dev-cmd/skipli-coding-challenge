@@ -8,27 +8,26 @@ A modern web application for searching GitHub users. It includes authentication 
 
 1. [Introduction](#introduction)
 2. [Features](#features)
-3. [Project Structure](#project-structure)
-4. [Usage](#usage)
+3. [Usage](#usage)
    - [1️⃣ Login Flow](#1️⃣-login-flow)
    - [2️⃣ User Search](#2️⃣-user-search)
    - [3️⃣ Pagination](#3️⃣-pagination)
    - [4️⃣ Liking a GitHub Profile](#4️⃣-liking-a-github-profile)
    - [5️⃣ Profile Dialog](#5️⃣-profile-dialog)
-5. [Screenshots](#screenshots)
-6. [Installation & Running](#installation--running)
-7. [Environment Variables](#environment-variables)
-8. [Notes](#notes)
+   - [6️⃣ Backend Confirmation](#6️⃣-backend-confirmation)
+4. [Screenshots](#screenshots)
+5. [Installation & Running](#installation--running)
+6. [Notes](#notes)
 
 ---
 
-## Introduction
+## 🎯 Introduction
 
 This app allows users to search for GitHub user profiles, mark them as favorites, and ensures that the liked state persists even after a page refresh. The application supports secure user authentication and phone number verification via Twilio, and it is fully responsive across both desktop and mobile devices.
 
 ---
 
-## Features
+## ✨ Features
 
 - Login using phone number (2-step: enter phone number and access code)
 - Search for GitHub users (table and grid views) — no login required
@@ -40,13 +39,11 @@ This app allows users to search for GitHub user profiles, mark them as favorites
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
 The project is organized into two main directories: client (frontend) and server (backend). Below is an overview of the structure:
 
 ### Client (Frontend)
-
-````text
 
 client/ # Frontend code (React + Vite + TypeScript)
 │ ├── dist/ # Build output directory (generated after build)
@@ -83,11 +80,9 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── tsconfig.json # Main TypeScript configuration
 │ ├── tsconfig.node.json # TypeScript configuration for Node.js
 │ └── vite.config.ts # Vite configuration file
-```text
 
 ### Server (Backend)
 
-```text
 ├── server/ # Backend code (Node.js + Express + TypeScript)
 │ ├── dist/ # Build output directory (generated after build)
 │ ├── node_modules/ # Dependency directory (managed by npm/pnpm)
@@ -107,13 +102,12 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── serviceAccountKey.json # Firebase service account key (if used)
 │ ├── swagger.yaml # Swagger/OpenAPI specification
 │ └── tsconfig.json # TypeScript configuration
-```text
 
 ---
 
-## Usage
+## 🚀 Usage
 
-### 1 Login Flow
+### 1️⃣ Login Flow
 
 - **Phone number input screen**
   ![Screenshot](./screenshots/login-step1.png)
@@ -166,7 +160,7 @@ client/ # Frontend code (React + Vite + TypeScript)
 
 ---
 
-## Screenshots
+## 🖼️ Screenshots
 
 > All screenshots are stored in the `screenshots` folder for easy management.
 
@@ -203,11 +197,11 @@ pnpm dev
 # Run the backend
 cd ../server
 pnpm dev
-````
+```
 
 ---
 
-## Environment Variables
+## 🌐 Environment Variables
 
 This project uses environment variables for both the frontend and backend. Make sure to create .env files following these examples:
 
@@ -274,7 +268,7 @@ SWAGGER_RATE_LIMIT_MAX_REQUESTS=10
 
 ---
 
-## Notes
+## 📝 Notes
 
 - 📌 Copy `.env.example` to `.env` in both `client` and `server` directories, then fill in the required values.
 - 📌 Make sure to replace all placeholder values like `your_..._here` with your actual credentials and URLs.
