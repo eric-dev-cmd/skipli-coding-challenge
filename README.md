@@ -189,18 +189,15 @@ cd <project-folder>
 # Install dependencies for the frontend
 cd client
 pnpm install
+# Run the frontend
+pnpm dev
 
 # Install dependencies for the backend
-cd ../server
+cd server
 pnpm install
-
-# Run the frontend
-cd ../client
-pnpm dev
-
 # Run the backend
-cd ../server
 pnpm dev
+
 ```
 
 ---
