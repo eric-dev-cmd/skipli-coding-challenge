@@ -8,16 +8,17 @@ A modern web application for searching GitHub users. It includes authentication 
 
 1. [Introduction](#introduction)
 2. [Features](#features)
-3. [Usage](#usage)
+3. [Project Structure](#project-structure)
+4. [Usage](#usage)
    - [1️⃣ Login Flow](#1️⃣-login-flow)
    - [2️⃣ User Search](#2️⃣-user-search)
    - [3️⃣ Pagination](#3️⃣-pagination)
    - [4️⃣ Liking a GitHub Profile](#4️⃣-liking-a-github-profile)
    - [5️⃣ Profile Dialog](#5️⃣-profile-dialog)
-   - [6️⃣ Backend Confirmation](#6️⃣-backend-confirmation)
-4. [Screenshots](#screenshots)
-5. [Installation & Running](#installation--running)
-6. [Notes](#notes)
+5. [Screenshots](#screenshots)
+6. [Installation & Running](#installation--running)
+7. [Environment Variables](#environment-variables)
+8. [Notes](#notes)
 
 ---
 
@@ -82,13 +83,11 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── tsconfig.json # Main TypeScript configuration
 │ ├── tsconfig.node.json # TypeScript configuration for Node.js
 │ └── vite.config.ts # Vite configuration file
-
 ```text
 
 ### Server (Backend)
 
 ```text
-
 ├── server/ # Backend code (Node.js + Express + TypeScript)
 │ ├── dist/ # Build output directory (generated after build)
 │ ├── node_modules/ # Dependency directory (managed by npm/pnpm)
@@ -108,14 +107,13 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── serviceAccountKey.json # Firebase service account key (if used)
 │ ├── swagger.yaml # Swagger/OpenAPI specification
 │ └── tsconfig.json # TypeScript configuration
-
 ```text
 
 ---
 
 ## Usage
 
-### 1️⃣ Login Flow
+### 1 Login Flow
 
 - **Phone number input screen**
   ![Screenshot](./screenshots/login-step1.png)
