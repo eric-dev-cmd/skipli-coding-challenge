@@ -45,6 +45,7 @@ The project is organized into two main directories: client (frontend) and server
 
 ### Client (Frontend)
 
+```
 client/ # Frontend code (React + Vite + TypeScript)
 │ ├── dist/ # Build output directory (generated after build)
 │ ├── node_modules/ # Dependency directory (managed by npm/pnpm)
@@ -80,9 +81,11 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── tsconfig.json # Main TypeScript configuration
 │ ├── tsconfig.node.json # TypeScript configuration for Node.js
 │ └── vite.config.ts # Vite configuration file
+```
 
 ### Server (Backend)
 
+```
 ├── server/ # Backend code (Node.js + Express + TypeScript)
 │ ├── dist/ # Build output directory (generated after build)
 │ ├── node_modules/ # Dependency directory (managed by npm/pnpm)
@@ -102,6 +105,7 @@ client/ # Frontend code (React + Vite + TypeScript)
 │ ├── serviceAccountKey.json # Firebase service account key (if used)
 │ ├── swagger.yaml # Swagger/OpenAPI specification
 │ └── tsconfig.json # TypeScript configuration
+```
 
 ---
 
