@@ -2,6 +2,7 @@ import { normalizePhoneNumber } from "../utils/phoneHelper";
 import { findGithubUserProfileService } from "./github.service";
 import { db } from "../config/firebase";
 import { getUserRef } from "@/utils/firebaseHelper";
+import { UnauthorizedError } from "@/errors/UnauthorizedError";
 
 export const likeGithubUserService = async (
   inputPhoneNumber: string,
@@ -55,7 +56,9 @@ export const getUserProfileService = async (inputPhoneNumber: string) => {
   const snapshot = await ref.once("value");
 
   if (!snapshot.exists()) {
-    throw new Error("User account not found. Please log in to continue.");
+    throw new UnauthorizedError(
+      "User account not found. Please log in to continue."
+    );
   }
 
   const data = snapshot.val();

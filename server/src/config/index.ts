@@ -37,9 +37,25 @@ export const config = {
   githubApiToken: process.env.GITHUB_API_TOKEN || "",
   corsOrigin: process.env.CORS_ORIGIN,
   rateLimit: {
-    otp: {
-      windowMs: parseInt(process.env.OTP_RATE_LIMIT_WINDOW_MS || "60000", 10),
-      maxRequests: parseInt(process.env.OTP_RATE_LIMIT_MAX_REQUESTS || "3", 10),
+    otpRequest: {
+      windowMs: parseInt(
+        process.env.OTP_REQUEST_RATE_LIMIT_WINDOW_MS || "60000",
+        10
+      ),
+      maxRequests: parseInt(
+        process.env.OTP_REQUEST_RATE_LIMIT_MAX_REQUESTS || "3",
+        10
+      ),
+    },
+    otpVerify: {
+      windowMs: parseInt(
+        process.env.OTP_VERIFY_RATE_LIMIT_WINDOW_MS || "60000",
+        10
+      ),
+      maxRequests: parseInt(
+        process.env.OTP_VERIFY_RATE_LIMIT_MAX_REQUESTS || "5",
+        10
+      ),
     },
     github: {
       windowMs: parseInt(

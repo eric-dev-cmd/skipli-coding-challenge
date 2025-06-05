@@ -9,9 +9,5 @@ export const normalizePhoneNumber = (input: string): string => {
     );
   }
 
-  if (phoneNumber.country !== "VN") {
-    throw new Error("Only Vietnamese phone numbers are supported.");
-  }
-
   return phoneNumber.number;
 };

@@ -2,10 +2,10 @@ import express from "express";
 import { notFound } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
 import { config } from "./config";
+import otpRequestRoutes from "./routes/accessCode.routes";
+import otpVerifyRoutes from "./routes/validateCode.routes";
 import githubRoutes from "./routes/github.routes";
-import accessCodeRoutes from "./routes/accessCode.routes";
 import userRoutes from "./routes/user.routes";
-import { db } from "./config/firebase";
 import { server } from "./server";
 
 const cors = require("cors");
@@ -53,10 +53,16 @@ const createRateLimiter = (windowMs: number, max: number, message: string) => {
 };
 
 // Rate Limiters
-const otpRateLimiter = createRateLimiter(
-  config.rateLimit.otp.windowMs,
-  config.rateLimit.otp.maxRequests,
+const otpRequestLimiter = createRateLimiter(
+  config.rateLimit.otpRequest.windowMs,
+  config.rateLimit.otpRequest.maxRequests,
   "Too many OTP requests. Please try again after 60 seconds."
+);
+
+const otpVerifyLimiter = createRateLimiter(
+  config.rateLimit.otpVerify.windowMs,
+  config.rateLimit.otpVerify.maxRequests,
+  "Too many OTP verification attempts. Please try again later."
 );
 
 const githubRateLimiter = createRateLimiter(
@@ -95,7 +101,8 @@ app.use(
 );
 
 // Routes
-app.use("/api/auth", otpRateLimiter, accessCodeRoutes);
+app.use("/api/auth/access-code", otpRequestLimiter, otpRequestRoutes);
+app.use("/api/auth/validate-code", otpVerifyLimiter, otpVerifyRoutes);
 app.use("/api/github", githubRateLimiter, githubRoutes);
 app.use("/api/user", userRoutes);
 

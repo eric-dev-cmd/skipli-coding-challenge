@@ -29,7 +29,10 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError<ApiError>) => {
     console.error("API Error:", error);
-
+    if (error && error.status === 401) {
+      localStorage.removeItem("phoneNumber");
+      window.location.href = "/auth/login";
+    }
     const apiMessage =
       error.response?.data?.message ||
       error.response?.data?.error ||
