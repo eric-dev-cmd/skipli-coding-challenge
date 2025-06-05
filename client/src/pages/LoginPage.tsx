@@ -16,7 +16,9 @@ const LoginPage = () => {
     setIsSubmitting(true);
     try {
       const response = await authService.requestAccessCode(phoneNumber);
-      toast.success(response.message || "Access code sent successfully!");
+      toast.success(
+        response.message || "Access code sent! Please check your messages."
+      );
     } finally {
       setIsSubmitting(false);
     }
